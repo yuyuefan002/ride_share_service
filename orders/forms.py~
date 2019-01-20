@@ -16,6 +16,6 @@ class DriverRegisterForm(ModelForm):
 
     class Meta:
         model = Driver
-        fields = ['first_name', 'last_name', 'user','type', 'plate_number', 'max_passenger', 'special_car_info']
+        fields = ['first_name', 'last_name', 'type','plate_number','max_passenger','special_car_info']
         labels = {'type': 'Vehicle Type'}
         help_texts = {'max_passenger': 'Please input a number range from 1 to 6'}
