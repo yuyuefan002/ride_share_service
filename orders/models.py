@@ -24,9 +24,10 @@ class Driver(models.Model):
         choices=VEHICLE_TYPE,
         blank=True,
         default='sd',
-        help_text='vehicle type')
-    plate_number = models.CharField(max_length=20)
-    max_passenger = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)])
+        help_text='vehicle type',
+        null=False)
+    plate_number = models.CharField(max_length=20,null=False)
+    max_passenger = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)],null=False)
     special_car_info = models.TextField('special_car_info', null=True, blank=True, max_length=1000)
 
     class Meta:
