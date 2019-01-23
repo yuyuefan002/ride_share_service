@@ -60,7 +60,7 @@ class Request(models.Model):
         choices=VEHICLE_TYPE,
         null=True,
         blank=True,
-        help_text='vehicle type')
+        help_text='optional, vehicle type')
     special_car_info = models.TextField('special_car_info', null=True, blank=True, max_length=1000)
     remarks = models.TextField('remarks', null=True, blank=True, max_length=1000)
     REQUEST_STATUS = (
