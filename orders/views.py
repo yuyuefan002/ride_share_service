@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.decorators import login_required, permission_required
 # from .models import Request, Driver
 from django.contrib.auth.forms import UserCreationForm
 from .forms import DriverRegisterForm, RideRequestForm
 from django.contrib.auth.models import User
 from .models import Request, Driver
+from django.db import IntegrityError
+from django.contrib import messages
 # Create your views here.
 
 
@@ -13,13 +15,21 @@ def index(request):
     return render(request, 'index.html')
 
 
+def DriverRegisterErr(request):
+    messages.add_message(request, messages.INFO, "You have already registered as a driver")
+    
+    return redirect('orders:index')
+
 @login_required
 def DriverRegister(request):
     if request.method == 'POST':
         form = DriverRegisterForm(request.POST)
         if form.is_valid():
-            driver_info = Driver.objects.create(user=request.user, max_passenger=1)
-            driver_info.first_name = form.cleaned_data['first_name']
+            try:
+                driver_info = Driver.objects.create(user=request.user, max_passenger=1)
+            except IntegrityError:
+                return redirect('orders:driver_register_error')
+                driver_info.first_name = form.cleaned_data['first_name']
             driver_info.last_name = form.cleaned_data['last_name']
             driver_info.type = form.cleaned_data['type']
             driver_info.plate_number = form.cleaned_data['plate_number']
@@ -29,7 +39,7 @@ def DriverRegister(request):
             return redirect('orders:index')
 
     else:
-        form = DriverRegisterForm2()
+        form = DriverRegisterForm()
     return render(request, 'driver_register.html', {'form': form})
 
 
