@@ -84,7 +84,7 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ride_share_service',
+        'NAME': 'test2',
         'USER': 'admin',
         'PASSWORD': 'admin',
         'HOST': '127.0.0.1',
