@@ -77,12 +77,6 @@ WSGI_APPLICATION = 'ride_share_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-DATABASES = {
-    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'test2',
         'USER': 'admin',
@@ -133,4 +127,10 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = '/order'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ridershareservice@gmail.com'
+EMAIL_HOST_PASSWORD = 'djangoweb'
+EMAIL_PORT = 587
