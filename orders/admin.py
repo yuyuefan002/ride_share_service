@@ -12,7 +12,7 @@ class DriverInline(admin.TabularInline):
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
     # list_display = ['id', 'owner', 'driver', 'create_date', 'destination', 'arrival_time', 'passenger_num', 'share_or_not', 'special_car_info', 'remarks', 'status']
-    list_display = ['id', 'create_date', 'owner','status']
+    list_display = ['create_date', 'destination', 'owner','status']
     list_filter = ('status', 'passenger_num')
     fieldsets = ((None, {'fields': ('id', 'create_date', 'status', 'share_or_not',)}),
                  ('Passenger info', {'fields': ('owner', 'destination', 'arrival_time', 'passenger_num')}),

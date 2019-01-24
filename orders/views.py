@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 # from .models import Request, Driver
 from django.contrib.auth.forms import UserCreationForm
 from .forms import DriverRegisterForm, RideRequestForm
@@ -7,6 +8,7 @@ from django.contrib.auth.models import User
 from .models import Request, Driver
 from django.db import IntegrityError
 from django.contrib import messages
+from django.views import generic
 # Create your views here.
 
 
@@ -62,3 +64,12 @@ def RideRequest(request):
     else:
         form = RideRequestForm()
     return render(request, 'ride_request.html', {'form': form})
+
+
+class RequestListView(LoginRequiredMixin, generic.ListView):
+    mode = Request
+    template_name = 'request_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Request.objects.filter(owner__exact=self.request.user).exclude(status__exact='cp')
