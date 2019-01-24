@@ -64,16 +64,15 @@ class Request(models.Model):
     special_car_info = models.TextField('special_car_info', null=True, blank=True, max_length=1000)
     remarks = models.TextField('remarks', null=True, blank=True, max_length=1000)
     REQUEST_STATUS = (
-        ('rq', 'Requested'),
+        ('op', 'open'),
         ('cf', 'Confirmed'),
-        ('op', 'Open'),
         ('cp', 'Complete'),
     )
     status = models.CharField(
         max_length=2,
         choices=REQUEST_STATUS,
         blank=True,
-        default='rq',
+        default='op',
         help_text='Request Status',
     )
 
@@ -86,5 +85,6 @@ class Request(models.Model):
     def get_absolute_url(self):
         return reverse('orders:ride_request_editing', args=[str(self.id)])
 
-    
+    def get_confirm_url(self):
+        return reverse('orders:ride_confirm', args=[str(self.id)])
 

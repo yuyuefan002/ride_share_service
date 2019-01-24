@@ -9,6 +9,8 @@ from .models import Request, Driver
 from django.db import IntegrityError
 from django.contrib import messages
 from django.views import generic
+from django.db.models import Q
+from django.core.mail import EmailMessage
 # Create your views here.
 
 
@@ -31,7 +33,7 @@ def DriverRegister(request):
                 driver_info = Driver.objects.create(user=request.user, max_passenger=1)
             except IntegrityError:
                 return redirect('orders:driver_register_error')
-                driver_info.first_name = form.cleaned_data['first_name']
+            driver_info.first_name = form.cleaned_data['first_name']
             driver_info.last_name = form.cleaned_data['last_name']
             driver_info.type = form.cleaned_data['type']
             driver_info.plate_number = form.cleaned_data['plate_number']
@@ -65,15 +67,6 @@ def RideRequest(request):
     else:
         form = RideRequestForm()
     return render(request, 'ride_request.html', {'form': form})
-
-
-class RequestListView(LoginRequiredMixin, generic.ListView):
-    mode = Request
-    template_name = 'request_list.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return Request.objects.filter(owner__exact=self.request.user).exclude(status__exact='cp')
 
 
 def RideRequestEditing(request, pk):
@@ -111,3 +104,41 @@ def RideRequestEditing(request, pk):
     }
 
     return render(request, 'ride_request_editing.html', context)
+
+@login_required
+def DriverCheck(request):
+    try:
+        Driver.objects.get(pk=request.user)
+    except Driver.DoesNotExist:
+        return redirect('orders:driver_register')
+    return redirect('orders:ride_search')
+
+@login_required
+def RideConfirm(request, pk):
+    request_detail = get_object_or_404(Request, pk=pk)
+    driver = get_object_or_404(Driver, pk=request.user)
+    request_detail.driver = driver
+    request_detail.status = 'cf'
+    request_detail.save()
+    email = EmailMessage('Request Confirmed', 'Dear user,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id), to=[driver.user.email])
+    email.send()
+    return redirect('orders:index')
+
+
+class RequestListView(LoginRequiredMixin, generic.ListView):
+    mode = Request
+    template_name = 'request_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Request.objects.filter(owner__exact=self.request.user).exclude(status__exact='cp')
+    
+
+class RideSearchingListView(LoginRequiredMixin, generic.ListView):
+    mode = Request
+    template_name = 'op_request_list.html'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        driver = Driver.objects.get(pk=self.request.user)
+        return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__icontains=driver.special_car_info)
