@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from .models import Request, Driver
@@ -74,3 +74,40 @@ class RequestListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Request.objects.filter(owner__exact=self.request.user).exclude(status__exact='cp')
+
+
+def RideRequestEditing(request, pk):
+    ride_request = get_object_or_404(Request, pk=pk)
+    if request.method == 'POST':
+        form = RideRequestForm(request.POST)
+        if form.is_valid():
+            ride_request.destination = form.cleaned_data['destination']
+            ride_request.arrival_time = form.cleaned_data['arrival_time']
+            ride_request.passenger_num = form.cleaned_data['passenger_num']
+            ride_request.share_or_not = form.cleaned_data['share_or_not']
+            ride_request.type = form.cleaned_data['type']
+            ride_request.special_car_info = form.cleaned_data['special_car_info']
+            ride_request.remarks = form.cleaned_data['remarks']
+            ride_request.save()
+            return redirect('orders:index')
+    else:
+        destination=ride_request.destination
+        arrival_time=ride_request.arrival_time
+        passenger_num = ride_request.passenger_num
+        share_or_not = ride_request.share_or_not
+        type = ride_request.type
+        special_car_info = ride_request.special_car_info
+        remarks = ride_request.remarks
+        form = RideRequestForm(initial={'destination': destination,
+                                        'arrival_time': arrival_time,
+                                        'passenger_num': passenger_num,
+                                        'share_or_not': share_or_not,
+                                        'type':type,
+                                        'special_car_info': special_car_info,
+                                        'remarks': remarks})
+    context = {
+        'form': form,
+        'ride_request': ride_request,
+    }
+
+    return render(request, 'ride_request_editing.html', context)

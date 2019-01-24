@@ -83,4 +83,8 @@ class Request(models.Model):
     def __str__(self):
         return f'{self.create_date}: {self.id} {self.owner}'
 
+    def get_absolute_url(self):
+        return reverse('orders:ride_request_editing', args=[str(self.id)])
+
+    
 
