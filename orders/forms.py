@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 class DriverRegisterForm(forms.Form):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
@@ -23,7 +24,7 @@ class DriverRegisterForm(forms.Form):
     plate_number = forms.CharField(max_length=20)
     max_passenger = forms.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)], initial=1)
     special_car_info = forms.CharField(required=False,  max_length=1000, )
-    help_texts = {'special_car_info':'special car infos'}
+    help_texts = {'special_car_info': 'special car infos'}
 
     
 class RideRequestForm(ModelForm):
@@ -33,4 +34,4 @@ class RideRequestForm(ModelForm):
         labels = {'arrival_time': 'Requested Arrival Time', 'passenger_num': 'How many people do you have?',
                   'share_or_not': 'Do you want to share your ride?',
                   'special_car_info': 'Any special car request?'}
-        # widget = {'arrival_time': SplitDateTimeWidget() }
+        

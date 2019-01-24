@@ -12,7 +12,6 @@ class Driver(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    request = models.OneToOneField('Request', on_delete=models.SET_NULL, null=True, blank=True)
     VEHICLE_TYPE = (
         ('sd', 'sedan'),
         ('sv', 'SUV'),
@@ -44,7 +43,7 @@ class Request(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular request')
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     # sharer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    
+    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True,blank=True)
     create_date = models.DateTimeField('Creation Date', default=timezone.now)
     destination = models.CharField(max_length=200)
     arrival_time = models.DateTimeField(null=True, blank=True)

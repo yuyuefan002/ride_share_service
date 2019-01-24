@@ -47,10 +47,10 @@ def DriverRegister(request):
 
 @login_required
 def RideRequest(request):
-    ride_request = Request.objects.create(owner=request.user)
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
         if form.is_valid():
+            ride_request = Request.objects.create(owner=request.user)
             ride_request.destination = form.cleaned_data['destination']
             ride_request.arrival_time = form.cleaned_data['arrival_time']
             ride_request.passenger_num = form.cleaned_data['passenger_num']
@@ -59,6 +59,7 @@ def RideRequest(request):
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
             ride_request.save()
+            
             return redirect('orders:index')
 
     else:
