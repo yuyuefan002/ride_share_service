@@ -44,16 +44,20 @@ class Driver(models.Model):
         return '{}, {}'.format(self.last_name, self.first_name)
 
 
-
 class Request(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular request')
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    # sharer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True,blank=True)
+    id = models.UUIDField(primary_key=True,
+                          default=uuid.uuid4,
+                          help_text='Unique ID for this particular request')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL,
+                              null=True, blank=True)
+    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL,
+                               null=True, blank=True)
     create_date = models.DateTimeField('Creation Date', default=timezone.now)
     destination = models.CharField(max_length=200)
     arrival_time = models.DateTimeField(null=True, blank=True)
-    passenger_num = models.IntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(6)])
+    passenger_num = models.IntegerField(default=1,
+                                        validators=[MinValueValidator(1),
+                                                    MaxValueValidator(6)])
     share_or_not = models.BooleanField(default=False)
     VEHICLE_TYPE = (
         ('sd', 'sedan'),
@@ -67,8 +71,10 @@ class Request(models.Model):
         null=True,
         blank=True,
         help_text='optional, vehicle type')
-    special_car_info = models.TextField('special_car_info', null=True, blank=True, max_length=1000)
-    remarks = models.TextField('remarks', null=True, blank=True, max_length=1000)
+    special_car_info = models.TextField('special_car_info', null=True,
+                                        blank=True, max_length=1000)
+    remarks = models.TextField('remarks', null=True,
+                               blank=True, max_length=1000)
     REQUEST_STATUS = (
         ('op', 'open'),
         ('cf', 'Confirmed'),
@@ -86,33 +92,44 @@ class Request(models.Model):
         ordering = ['create_date', 'owner']
 
     def __str__(self):
-        return f'{self.create_date}: {self.id} {self.owner}'
+        return f'{self.create_date}: {self.owner}'
 
     def get_absolute_url(self):
-        return reverse('orders:ride_request_editing', args=[str(self.id)])
+        return reverse('orders:ride_request_jump', args=[str(self.id)])
 
     def get_confirm_url(self):
         return reverse('orders:ride_confirm', args=[str(self.id)])
 
+    def add_share_ride_url(self):
+        return reverse('orders:share_ride_confirm', args=[str(self.id)])
 
     
 class ShareRequest(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular request')
+    id = models.UUIDField(primary_key=True,
+                          default=uuid.uuid4,
+                          help_text='Unique ID for this particular request',)
     sharer = models.ForeignKey(User, on_delete=models.SET_NULL,
                                null=True, blank=True)
     create_date = models.DateTimeField('Creation Date', default=timezone.now)
     destination = models.CharField(max_length=200)
     early_arrival_time = models.DateTimeField(null=True, blank=True)
     late_arrival_time = models.DateTimeField(null=True, blank=True)
-    passenger_num = models.IntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(6)])
-    main_request = models.ForeignKey(Request, on_delete=models.SET_NULL,null=True, blank=True)
+    passenger_num = models.IntegerField(default=1,
+                                        validators=[MinValueValidator(1),
+                                                    MaxValueValidator(6)])
+    main_request = models.ForeignKey(Request,
+                                     on_delete=models.SET_NULL,
+                                     null=True,
+                                     blank=True)
     
     class Meta:
         ordering = ['create_date', 'sharer']
 
     def __str__(self):
-        return f'{self.create_date}: {self.id} {self.sharer}'
+        return f'{self.create_date}: {self.sharer}'
 
     def get_absolute_url(self):
         return reverse('orders:ride_request_editing', args=[str(self.id)])
 
+
+    

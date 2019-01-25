@@ -84,26 +84,13 @@ def ShareRideRequest(request):
     return render(request, 'share_ride_request.html', {'form': form})
 
 
-def CFRideRequestCheck(request,pk):
+def CFRideRequestCheck(request, pk):
     ride_request = get_object_or_404(Request, pk=pk)
     driver_info = get_object_or_404(Driver, pk=ride_request.driver.user)
     context = {
         'driver_info': driver_info,
         'ride_request': ride_request,
     }
-
-    '''
-    {'create_date': ride_request.create_date,
-          'status': ride_request.status,
-          'driver': driver_info.user,
-          'vehicle_type': driver_info.type,
-          'vehicle_plate_num': driver_info.plate_number,
-          'destination': ride_request.destination,
-          'passenger_num': ride_request.passenger_num,
-          'special_car_info': ride_request.special_car_info,
-          'remarks': ride_request.remarks,
-    }
-    '''
     return render(request, "cf_ride_request_check.html", context)
 
 
