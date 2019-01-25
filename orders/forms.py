@@ -1,6 +1,5 @@
-from django.contrib.auth.models import User
 from django.forms import ModelForm
-from .models import Driver, Request
+from .models import Request, ShareRequest
 from django.core.exceptions import ValidationError
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -34,4 +33,12 @@ class RideRequestForm(ModelForm):
         labels = {'arrival_time': 'Requested Arrival Time', 'passenger_num': 'How many people do you have?',
                   'share_or_not': 'Do you want to share your ride?',
                   'special_car_info': 'Any special car request?'}
+        
+
+class ShareRideRequestForm(ModelForm):
+    class Meta:
+        model = ShareRequest
+        fields = ['destination', 'early_arrival_time', 'late_arrival_time', 'passenger_num', ]
+        labels = {'early_arrival_time': 'Earliest Arrival Time', 'late_arrival_time': 'Latest Arrival Time', 'passenger_num': 'How many people do you have?',
+                  }
         

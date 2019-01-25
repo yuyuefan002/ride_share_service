@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import Request, Driver
+from .models import Request, Driver, ShareRequest
 # Register your models here.
 
 
@@ -19,8 +19,15 @@ class RequestAdmin(admin.ModelAdmin):
                  ('Vehicle Request info', {'fields': ('type', 'special_car_info', 'remarks')}))
    
 
-
 @admin.register(Driver)
 class DriverAdmin(admin.ModelAdmin):
     list_display = ['last_name', 'first_name', 'user', 'type', 'plate_number', 'max_passenger', 'special_car_info']
     inlines = [RequestInline]
+
+
+@admin.register(ShareRequest)
+class ShareRequestAdmin(admin.ModelAdmin):
+    list_display = ['create_date', 'destination', 'sharer',]
+    list_filter = ('passenger_num',)
+    fieldsets = ((None, {'fields': ('id', 'create_date', 'main_request',)}),
+                 ('Passenger info', {'fields': ('sharer', 'destination', 'early_arrival_time','late_arrival_time', 'passenger_num')}),)

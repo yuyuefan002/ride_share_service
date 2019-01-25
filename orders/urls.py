@@ -12,4 +12,6 @@ urlpatterns =[
     path('ride-search/', views.RideSearchingListView.as_view(), name='ride_search'),
     path('driver-check/', views.DriverCheck, name='driver_check'),
     path('ride-confirm/<uuid:pk>/', views.RideConfirm, name='ride_confirm'),
+    path('share-ride-request/', views.ShareRideRequest, name='share_ride_request'),
+    path('share-ride_list/<uuid:pk>/', views.ShareRideSearchingListView.as_view(), name='share_ride_list'),
 ]

@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from .models import Request, Driver
 from django.contrib.auth.forms import UserCreationForm
-from .forms import DriverRegisterForm, RideRequestForm
+from .forms import DriverRegisterForm, RideRequestForm, ShareRideRequestForm
 from django.contrib.auth.models import User
-from .models import Request, Driver
+from .models import Request, Driver, ShareRequest
 from django.db import IntegrityError
 from django.contrib import messages
 from django.views import generic
@@ -60,13 +60,28 @@ def RideRequest(request):
             ride_request.type = form.cleaned_data['type']
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
-            ride_request.save()
-            
+            ride_request.save()            
             return redirect('orders:index')
-
     else:
         form = RideRequestForm()
     return render(request, 'ride_request.html', {'form': form})
+
+
+@login_required
+def ShareRideRequest(request):
+    if request.method == 'POST':
+        form = ShareRideRequestForm(request.POST)
+        if form.is_valid():
+            share_ride_request = ShareRequest.objects.create(sharer=request.user)
+            share_ride_request.destination = form.cleaned_data['destination']
+            share_ride_request.early_arrival_time = form.cleaned_data['early_arrival_time']
+            share_ride_request.late_arrival_time = form.cleaned_data['late_arrival_time']
+            share_ride_request.passenger_num = form.cleaned_data['passenger_num']
+            share_ride_request.save()
+            return redirect('orders:share_ride_list', pk=share_ride_request.id)
+    else:
+        form = ShareRideRequestForm()
+    return render(request, 'share_ride_request.html', {'form': form})
 
 
 def RideRequestEditing(request, pk):
@@ -120,7 +135,9 @@ def RideConfirm(request, pk):
     request_detail.driver = driver
     request_detail.status = 'cf'
     request_detail.save()
-    email = EmailMessage('Request Confirmed', 'Dear user,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id), to=[driver.user.email])
+    email = EmailMessage('Request Confirmed', 'Dear driver,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id), to=[driver.user.email])
+    email.send()
+    email = EmailMessage('Request Confirmed', 'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id), to=[request_detail.owner.email])
     email.send()
     return redirect('orders:index')
 
@@ -142,3 +159,13 @@ class RideSearchingListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
         return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__icontains=driver.special_car_info)
+
+
+class ShareRideSearchingListView(LoginRequiredMixin, generic.ListView):
+    mode = Request
+    template_name = 'share_ride_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        shareRequest = ShareRequest.objects.get(pk=self.kwargs['pk'])
+        return Request.objects.filter(status__exact='op').filter(share_or_not__exact=True).filter(passenger_num__lt=(6-shareRequest.passenger_num))
