@@ -17,5 +17,16 @@
       </p>
     {% endfor %}
     <button type="submit">Submit</button>
+  {% if share_ride_request %}
+  <ul>
+    {% for request in share_ride_request %}
+      <li>
+        <a href="{{request.add_share_ride_url}}/{{shareRequest.id}}">Required Arrival Time: {{ request.arrival_time }} Destination: {{request.destination}}</a>(Owner:{{request.owner}}, passenger_num: {{request.passenger_num}})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>There is no available shared request</p>
+  {% endif %}
   </form>
 {% endblock %}

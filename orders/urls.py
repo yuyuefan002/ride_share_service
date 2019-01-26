@@ -16,7 +16,8 @@ urlpatterns =[
     path('ride-confirm/<uuid:pk>/', views.RideConfirm, name='ride_confirm'),
     path('share-ride-request/', views.ShareRideRequest, name='share_ride_request'),
     path('share-ride_list/<uuid:pk>/', views.ShareRideSearchingListView.as_view(), name='share_ride_list'),
-    path('share-ride-confirm/<uuid:main_id>', views.ShareRideConfirm, name='share_ride_confirm'),
+    path('share-ride-confirm/<uuid:main_id>',views.ShareRideConfirm, name='middlepath'),
+    path('share-ride-confirm/<uuid:main_id>/<uuid:share_id>', views.ShareRideConfirm, name='share_ride_confirm'),
     path('cf-ride-request-check/<uuid:pk>/', views.CFRideRequestCheck, name='cf_ride_request_check'),
     path('ride-request-status-jump/<uuid:pk>/', views.RideRequestJump, name='ride_request_jump'),
 ]

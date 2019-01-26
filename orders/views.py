@@ -182,7 +182,13 @@ def RideConfirm(request, pk):
     return redirect('orders:index')
 
 @login_required
-def ShareRideConfirm(request, main_id):
+def ShareRideConfirm(request, main_id, share_id):
+    share_ride_request = ShareRequest.objects.get(pk=share_id)
+    main_ride_request = Request.objects.get(pk=main_id)
+    share_ride_request.main_request = main_ride_request
+    share_ride_request.save()
+    email = EmailMessage('Request Confirmed', 'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(share_ride_request.id), to=[share_ride_request.sharer.email])
+    email.send()
     return redirect('orders:index')
 
 
@@ -222,4 +228,9 @@ class ShareRideSearchingListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         shareRequest = ShareRequest.objects.get(pk=self.kwargs['pk'])
-        return Request.objects.filter(status__exact='op').filter(share_or_not__exact=True).filter(passenger_num__lt=(6-shareRequest.passenger_num))
+        return Request.objects.filter(status__exact='op').filter(share_or_not__exact=True).filter(passenger_num__lt=(6-shareRequest.passenger_num)).filter(destination__exact=shareRequest.destination).filter(arrival_time__gte=shareRequest.early_arrival_time).filter(arrival_time__lte=shareRequest.late_arrival_time)
+
+    def get_context_data(self, **kwargs):
+        context = super(ShareRideSearchingListView, self).get_context_data(**kwargs)
+        context['share_request_id'] = self.kwargs['pk']
+        return context

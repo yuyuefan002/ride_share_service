@@ -101,7 +101,7 @@ class Request(models.Model):
         return reverse('orders:ride_confirm', args=[str(self.id)])
 
     def add_share_ride_url(self):
-        return reverse('orders:share_ride_confirm', args=[str(self.id)])
+        return reverse('orders:middlepath', args=[str(self.id)])
 
     def get_complete_url(self):
         return reverse('orders:cf_ride_detail', args=[str(self.id)])
