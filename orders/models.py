@@ -103,6 +103,8 @@ class Request(models.Model):
     def add_share_ride_url(self):
         return reverse('orders:share_ride_confirm', args=[str(self.id)])
 
+    def get_complete_url(self):
+        return reverse('orders:cf_ride_detail', args=[str(self.id)])
     
 class ShareRequest(models.Model):
     id = models.UUIDField(primary_key=True,

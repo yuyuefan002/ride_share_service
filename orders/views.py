@@ -67,6 +67,7 @@ def RideRequest(request):
     return render(request, 'ride_request.html', {'form': form})
 
 
+
 @login_required
 def ShareRideRequest(request):
     if request.method == 'POST':
@@ -84,7 +85,7 @@ def ShareRideRequest(request):
     return render(request, 'share_ride_request.html', {'form': form})
 
 
-def CFRideRequestCheck(request,pk):
+def CFRideRequestCheck(request, pk):
     ride_request = get_object_or_404(Request, pk=pk)
     driver_info = get_object_or_404(Driver, pk=ride_request.driver.user)
     context = {
@@ -151,6 +152,15 @@ def RideRequestEditing(request, pk):
     return render(request, 'ride_request_editing.html', context)
 
 @login_required
+def CFRideDetail(request, pk):
+    ride_request = Request.objects.get(pk=pk)
+    if request.method == 'POST':
+        ride_request.status = 'cp'
+        ride_request.save()
+        return redirect('orders:index')
+    return render(request, 'cf_ride_detail.html', {'ride_request': ride_request})
+
+@login_required
 def DriverCheck(request):
     try:
         Driver.objects.get(pk=request.user)
@@ -193,6 +203,16 @@ class RideSearchingListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
         return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__icontains=driver.special_car_info)
+
+
+class CFRideStatusListView(LoginRequiredMixin, generic.ListView):
+    mode = Request
+    template_name = 'cf_request_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        driver = Driver.objects.get(pk=self.request.user)
+        return Request.objects.filter(driver__exact=driver).filter(status__exact='cf')
 
 
 class ShareRideSearchingListView(LoginRequiredMixin, generic.ListView):
