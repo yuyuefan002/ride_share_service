@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from bootstrap_datepicker_plus import DateTimePickerInput
 from .models import Request, ShareRequest
 from django.core.exceptions import ValidationError
 from django import forms
@@ -33,7 +34,9 @@ class RideRequestForm(ModelForm):
         labels = {'arrival_time': 'Requested Arrival Time', 'passenger_num': 'How many people do you have?',
                   'share_or_not': 'Do you want to share your ride?',
                   'special_car_info': 'Any special car request?'}
-        
+        widgets = {
+            'arrival_time': DateTimePickerInput()
+        }
 
 class ShareRideRequestForm(ModelForm):
     class Meta:
@@ -42,3 +45,7 @@ class ShareRideRequestForm(ModelForm):
         labels = {'early_arrival_time': 'Earliest Arrival Time', 'late_arrival_time': 'Latest Arrival Time', 'passenger_num': 'How many people do you have?',
                   }
         
+        widgets = {
+            'early_arrival_time': DateTimePickerInput(),
+            'late_arrival_time': DateTimePickerInput(),
+        }
