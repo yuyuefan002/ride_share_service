@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['vcm-5475.vm.duke.edu',]
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap_datepicker_plus'
     'orders.apps.OrdersConfig',
     'accounts.apps.AccountsConfig',
     'django.contrib.admin',
