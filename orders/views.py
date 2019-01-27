@@ -56,6 +56,41 @@ def DriverRegister(request):
 
 
 @login_required
+def DriverEditor(request):
+    '''
+    Driver Info Editing
+    '''
+    driver_info = get_object_or_404(Driver, user=request.user)
+    if request.method == 'POST':
+        form = DriverRegisterForm(request.POST)
+        if form.is_valid():
+            driver_info.first_name = form.cleaned_data['first_name']
+            driver_info.last_name = form.cleaned_data['last_name']
+            driver_info.type = form.cleaned_data['type']
+            driver_info.plate_number = form.cleaned_data['plate_number']
+            driver_info.max_passenger = form.cleaned_data['max_passenger']
+            driver_info.special_car_info = form.cleaned_data['special_car_info']
+            driver_info.save()
+            return redirect('orders:index')
+
+    else:
+        first_name = driver_info.first_name
+        last_name = driver_info.last_name
+        type = driver_info.type
+        plate_number = driver_info.plate_number
+        max_passenger = driver_info.max_passenger
+        special_car_info = driver_info.special_car_info
+        form = DriverRegisterForm(initial={'first_name': first_name,
+                                           'last_name': last_name,
+                                           'type': type,
+                                           'plate_number': plate_number,
+                                           'max_passenger': max_passenger,
+                                           'special_car_info': special_car_info,})
+    context = {'form': form,
+               'driver_info': driver_info}
+    return render(request, 'driver_register.html', context)
+
+@login_required
 def RideRequest(request):
     '''
     Ride Requesting
@@ -72,7 +107,7 @@ def RideRequest(request):
             ride_request.type = form.cleaned_data['type']
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
-            ride_request.save()            
+            ride_request.save()
             return redirect('orders:index')
     else:
         form = RideRequestForm()
@@ -134,7 +169,8 @@ def CFShareRideRequestCheck(request, pk):
     share_ride_request = ShareRequest.objects.get(pk=pk)
     ride_request = share_ride_request.main_request
     try:
-        driver_info = Driver.objects.get(pk=share_ride_request.main_request.driver)
+        driver_info = Driver.objects.get(pk=share_ride_request.
+                                         main_request.driver)
     except Driver.DoesNotExist:
         driver_info = None
     try:
@@ -190,7 +226,7 @@ def RideRequestEditing(request, pk):
                                         'arrival_time': arrival_time,
                                         'passenger_num': passenger_num,
                                         'share_or_not': share_or_not,
-                                        'type':type,
+                                        'type': type,
                                         'special_car_info': special_car_info,
                                         'remarks': remarks})
     context = {
@@ -212,7 +248,8 @@ def CFRideDetail(request, pk):
         ride_request.status = 'cp'
         ride_request.save()
         return redirect('orders:index')
-    return render(request, 'cf_ride_detail.html', {'ride_request': ride_request})
+    return render(request, 'cf_ride_detail.html',
+                  {'ride_request': ride_request})
 
 
 @login_required
