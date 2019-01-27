@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  <h1>Ride Searching</h1>
+  {% if share_ride_request %}
+  <ul>
+       <li><a>Creation Date: {{ride_request.create_date}}</a></li>
+       <li><a>Ride Status: {{ride_request.status}}</a></li>
+       <li><a>Driver: {{driver_info.user}}</a></li>
+       <li><a>Vehicle: {{driver_info.type}}</a></li>
+       <li><a>Vehicle Plate Number: {{driver_info.plate_number}}</a></li>
+       <li><a>Destination: {{ride_request.destination}}</a></li>
+       <li><a>Passenger Number:{{ride_request.passenger_num + share_ride_request.passenger_number}}</a></li>
+       <li><a>Special Car Info:{{ride_request.special_car_info}}</a></li>
+       <li><a>Remarks: {{ride_request.remarks}}</a></li>
+       
+  </ul>
+  {% else %}
+    <p>There is no required order.</p>
+  {% endif %}       
+{% endblock %}

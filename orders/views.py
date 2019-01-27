@@ -24,6 +24,7 @@ def DriverRegisterErr(request):
     
     return redirect('orders:index')
 
+
 @login_required
 def DriverRegister(request):
     if request.method == 'POST':
@@ -92,20 +93,22 @@ def CFRideRequestCheck(request, pk):
         'driver_info': driver_info,
         'ride_request': ride_request,
     }
-
-    '''
-    {'create_date': ride_request.create_date,
-          'status': ride_request.status,
-          'driver': driver_info.user,
-          'vehicle_type': driver_info.type,
-          'vehicle_plate_num': driver_info.plate_number,
-          'destination': ride_request.destination,
-          'passenger_num': ride_request.passenger_num,
-          'special_car_info': ride_request.special_car_info,
-          'remarks': ride_request.remarks,
-    }
-    '''
     return render(request, "cf_ride_request_check.html", context)
+
+
+def CFShareRideRequestCheck(request, pk):
+    share_ride_request = get_object_or_404(ShareRequest, pk=pk)
+    main_ride_request = get_object_or_404(Request, pk=share_ride_request.main_request.id)
+    try:
+        driver_info = Driver.objects.get( pk=main_ride_request.driver.user)
+    except Driver.DoesNotExist:
+        driver_info = None
+        context = {
+            'share_ride_request': share_ride_request,
+            'main_ride_request': main_ride_request,
+            'driver_info': driver_info,
+        }
+    return render(request, 'share_ride_request_check.html', context)
 
 
 def RideRequestJump(request, pk):
@@ -151,6 +154,7 @@ def RideRequestEditing(request, pk):
 
     return render(request, 'ride_request_editing.html', context)
 
+
 @login_required
 def CFRideDetail(request, pk):
     ride_request = Request.objects.get(pk=pk)
@@ -160,6 +164,7 @@ def CFRideDetail(request, pk):
         return redirect('orders:index')
     return render(request, 'cf_ride_detail.html', {'ride_request': ride_request})
 
+
 @login_required
 def DriverCheck(request):
     try:
@@ -167,6 +172,7 @@ def DriverCheck(request):
     except Driver.DoesNotExist:
         return redirect('orders:driver_register')
     return redirect('orders:ride_search')
+
 
 @login_required
 def RideConfirm(request, pk):
@@ -199,8 +205,17 @@ class RequestListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Request.objects.filter(owner__exact=self.request.user).exclude(status__exact='cp')
-    
 
+
+class ShareRequestListView(LoginRequiredMixin, generic.ListView):
+    mode = ShareRequest
+    template_name = 'share_request_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return ShareRequest.objects.filter(sharer__exact=self.request.user)
+
+    
 class RideSearchingListView(LoginRequiredMixin, generic.ListView):
     mode = Request
     template_name = 'op_request_list.html'

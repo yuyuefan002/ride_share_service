@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Request List</h1>
+  {% if request_list %}
+  <ul>
+    {% for request in request_list %}
+      <li>
+        <a href="{{ request.get_share_request_url }}">Creation time: {{ request.create_date }} Destination: {{request.destination}}</a>{% if request.main_request.driver%}(Driver: {{request.main_request.driver}}){% endif %}(status: {{request.main_request.status}})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>You didn't make any request yet.</p>
+  {% endif %}       
+{% endblock %}

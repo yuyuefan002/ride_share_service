@@ -8,6 +8,9 @@ urlpatterns =[
     path('ride-request/', views.RideRequest, name='ride_request'),
     path('driver-register-error/', views.DriverRegisterErr, name='driver_register_error'),
     path('requests/', views.RequestListView.as_view(), name='requests'),
+    path('share-requests', views.ShareRequestListView.as_view(), name='share_requests'),
+    path('cf-ride-request-check/<uuid:pk>/', views.CFRideRequestCheck, name='cf_ride_request_check'),
+    path('cf-share-ride-request-check/<uuid:pk>/', views.CFShareRideRequestCheck, name='cf_share_ride_request_check'),
     path('requests/<uuid:pk>/', views.RideRequestEditing, name='ride_request_editing'),
     path('ride-search/', views.RideSearchingListView.as_view(), name='ride_search'),
     path('cf-ride-status', views.CFRideStatusListView.as_view(), name='cf_ride_status'),
@@ -18,6 +21,5 @@ urlpatterns =[
     path('share-ride_list/<uuid:pk>/', views.ShareRideSearchingListView.as_view(), name='share_ride_list'),
     path('share-ride-confirm/<uuid:main_id>',views.ShareRideConfirm, name='middlepath'),
     path('share-ride-confirm/<uuid:main_id>/<uuid:share_id>', views.ShareRideConfirm, name='share_ride_confirm'),
-    path('cf-ride-request-check/<uuid:pk>/', views.CFRideRequestCheck, name='cf_ride_request_check'),
     path('ride-request-status-jump/<uuid:pk>/', views.RideRequestJump, name='ride_request_jump'),
 ]

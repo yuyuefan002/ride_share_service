@@ -2,8 +2,9 @@
 {% block content %}
 <p>Welcome the ride share website</p>
 <a href="{% url 'orders:ride_request' %}"><p>Request a ride</p></a>
-<a href="{% url 'orders:requests'%}"><p>View ongoing requests</p></a>
+<a href="{% url 'orders:requests' %}"><p>View ongoing requests</p></a>
+<a href="{% url 'orders:share_requests' %}"><p>View ongoing share requests</p></a>
 <a href="{% url 'orders:driver_check' %}"><p>Ride search</p></a>
-<a href="{% url 'orders:cf_ride_status'%}"><p>Driver's onging orders</p></a>
+<a href="{% url 'orders:cf_ride_status' %}"><p>Driver's onging orders</p></a>
 <a href="{% url 'orders:share_ride_request' %}"><p>Find a shared ride</p></a>
 {% endblock %}
