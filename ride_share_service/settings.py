@@ -33,7 +33,8 @@ BOOTSTRAP4 = {
     'include_jquery': True,
 }
 INSTALLED_APPS = [
-    'bootstrap_datepicker_plus'
+    'bootstrap4',
+    'bootstrap_datepicker_plus',
     'orders.apps.OrdersConfig',
     'accounts.apps.AccountsConfig',
     'django.contrib.admin',
