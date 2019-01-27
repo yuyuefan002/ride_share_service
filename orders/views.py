@@ -56,8 +56,6 @@ def DriverRegister(request):
 
 
 @login_required
-<<<<<<< HEAD
-=======
 def DriverEditor(request):
     '''
     Driver Info Editing
@@ -93,7 +91,6 @@ def DriverEditor(request):
     return render(request, 'driver_register.html', context)
 
 @login_required
->>>>>>> 31cd6be76cb36a78876208f18ab3efd7455945d4
 def RideRequest(request):
     '''
     Ride Requesting
@@ -110,11 +107,7 @@ def RideRequest(request):
             ride_request.type = form.cleaned_data['type']
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
-<<<<<<< HEAD
             ride_request.save()            
-=======
-            ride_request.save()
->>>>>>> 31cd6be76cb36a78876208f18ab3efd7455945d4
             return redirect('orders:index')
     else:
         form = RideRequestForm()
@@ -176,12 +169,9 @@ def CFShareRideRequestCheck(request, pk):
     share_ride_request = ShareRequest.objects.get(pk=pk)
     ride_request = share_ride_request.main_request
     try:
-<<<<<<< HEAD
         driver_info = Driver.objects.get(pk=share_ride_request.main_request.driver)
-=======
         driver_info = Driver.objects.get(pk=share_ride_request.
                                          main_request.driver)
->>>>>>> 31cd6be76cb36a78876208f18ab3efd7455945d4
     except Driver.DoesNotExist:
         driver_info = None
     try:
@@ -237,11 +227,8 @@ def RideRequestEditing(request, pk):
                                         'arrival_time': arrival_time,
                                         'passenger_num': passenger_num,
                                         'share_or_not': share_or_not,
-<<<<<<< HEAD
                                         'type':type,
-=======
                                         'type': type,
->>>>>>> 31cd6be76cb36a78876208f18ab3efd7455945d4
                                         'special_car_info': special_car_info,
                                         'remarks': remarks})
     context = {
@@ -263,12 +250,9 @@ def CFRideDetail(request, pk):
         ride_request.status = 'cp'
         ride_request.save()
         return redirect('orders:index')
-<<<<<<< HEAD
     return render(request, 'cf_ride_detail.html', {'ride_request': ride_request})
-=======
     return render(request, 'cf_ride_detail.html',
                   {'ride_request': ride_request})
->>>>>>> 31cd6be76cb36a78876208f18ab3efd7455945d4
 
 
 @login_required
