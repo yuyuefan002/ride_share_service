@@ -29,7 +29,9 @@ ALLOWED_HOSTS = ['vcm-5475.vm.duke.edu',]
 
 
 # Application definition
-
+BOOTSTRAP4 = {
+    'include_jquery': True,
+}
 INSTALLED_APPS = [
     'bootstrap_datepicker_plus'
     'orders.apps.OrdersConfig',
