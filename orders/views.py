@@ -13,10 +13,16 @@ from django.core.mail import EmailMessage
 
 @login_required
 def index(request):
+    '''
+    main page
+    '''
     return render(request, 'index.html')
 
 
 def DriverRegisterErr(request):
+    '''
+    show the warning about repeat register as a driver
+    '''
     messages.add_message(request, messages.INFO, "You have already registered as a driver")
     
     return redirect('orders:index')
@@ -24,6 +30,10 @@ def DriverRegisterErr(request):
 
 @login_required
 def DriverRegister(request):
+    '''
+    Driver Registration
+    User fill the register form to be a driver
+    '''
     if request.method == 'POST':
         form = DriverRegisterForm(request.POST)
         if form.is_valid():
@@ -47,6 +57,10 @@ def DriverRegister(request):
 
 @login_required
 def RideRequest(request):
+    '''
+    Ride Requesting
+    User can request a ride by filling in this form
+    '''
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
         if form.is_valid():
@@ -65,13 +79,21 @@ def RideRequest(request):
     return render(request, 'ride_request.html', {'form': form})
 
 
-
 @login_required
 def ShareRideRequest(request):
+    '''
+    Ride Searching(Sharer)
+    Sharer can fillin the form to generate their order, and use the information
+    to look up the available ride
+    '''
     if request.method == 'POST':
         form = ShareRideRequestForm(request.POST)
         if form.is_valid():
-            share_ride_request = ShareRequest.objects.create(sharer=request.user)
+            try:
+                share_ride_request = ShareRequest.objects.get(main_request=None)
+                share_ride_request.sharer = request.user
+            except ShareRequest.DoesNotExist:
+                share_ride_request = ShareRequest.objects.create(sharer=request.user)
             share_ride_request.destination = form.cleaned_data['destination']
             share_ride_request.early_arrival_time = form.cleaned_data['early_arrival_time']
             share_ride_request.late_arrival_time = form.cleaned_data['late_arrival_time']
@@ -84,30 +106,54 @@ def ShareRideRequest(request):
 
 
 def CFRideRequestCheck(request, pk):
+    '''
+    Ride Status Viewing(Owner)
+    Owner can check the current ride details including
+    driver and vehicle, sharer information
+    '''
     ride_request = get_object_or_404(Request, pk=pk)
     driver_info = get_object_or_404(Driver, pk=ride_request.driver.user)
+    try:
+        share_ride_request = ShareRequest.objects.filter(main_request=ride_request.id)
+    except ShareRequest.DoesNotExist:
+        share_ride_request = None
     context = {
         'driver_info': driver_info,
         'ride_request': ride_request,
+        'share_ride_request': share_ride_request,
     }
     return render(request, "cf_ride_request_check.html", context)
 
 
 def CFShareRideRequestCheck(request, pk):
+    '''
+    Ride Satus Viewing(Sharer)
+    Sharer can check the current ride details including
+    driver and vehicle, and other sharer information
+    '''
     share_ride_request = ShareRequest.objects.get(pk=pk)
+    ride_request = share_ride_request.main_request
     try:
         driver_info = Driver.objects.get(pk=share_ride_request.main_request.driver)
     except Driver.DoesNotExist:
         driver_info = None
+    try:
+        share_ride_request = ShareRequest.objects.filter(main_request=ride_request.id)
+    except ShareRequest.DoesNotExist:
+        share_ride_request = None
     context = {
             'share_ride_request': share_ride_request,
-            'ride_request': share_ride_request.main_request,
+            'ride_request': ride_request,
             'driver_info': driver_info,
         }
-    return render(request, 'share_ride_request_check.html', context)
+    return render(request, 'cf_ride_request_check.html', context)
 
 
 def RideRequestJump(request, pk):
+    '''
+    Ride Request Editing/Viewing Jump(Owner)
+    Jump based on the status of request
+    '''
     ride_request = get_object_or_404(Request, pk=pk)
     if ride_request.status == 'op':
         return redirect('orders:ride_request_editing', pk=ride_request.id)
@@ -115,6 +161,10 @@ def RideRequestJump(request, pk):
 
 
 def RideRequestEditing(request, pk):
+    '''
+    Ride Request Editing(Owner)
+    User can edit the detail of this open request
+    '''
     ride_request = get_object_or_404(Request, pk=pk)
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
@@ -153,6 +203,10 @@ def RideRequestEditing(request, pk):
 
 @login_required
 def CFRideDetail(request, pk):
+    '''
+    Ride Status Viewing(Driver)
+    Driver can mark a specific request to be completed
+    '''
     ride_request = Request.objects.get(pk=pk)
     if request.method == 'POST':
         ride_request.status = 'cp'
@@ -163,6 +217,9 @@ def CFRideDetail(request, pk):
 
 @login_required
 def DriverCheck(request):
+    '''
+    Check whether user has registered as a driver or not
+    '''
     try:
         Driver.objects.get(pk=request.user)
     except Driver.DoesNotExist:
@@ -172,8 +229,13 @@ def DriverCheck(request):
 
 @login_required
 def RideConfirm(request, pk):
+    '''
+    Ride Searching(Driver)
+    Drive confirms a request, owner, sharer, driver will receive an email notification
+    '''
     request_detail = get_object_or_404(Request, pk=pk)
     driver = get_object_or_404(Driver, pk=request.user)
+    share_request = ShareRequest.objects.filter(main_request=request_detail)
     request_detail.driver = driver
     request_detail.status = 'cf'
     request_detail.save()
@@ -185,23 +247,32 @@ def RideConfirm(request, pk):
                          'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
                          to=[request_detail.owner.email])
     email.send()
+    for request in share_request:
+        email = EmailMessage('Request Confirmed',
+                         'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
+                         to=[request.sharer.email])
+        email.send()
     return redirect('orders:index')
 
 
 @login_required
 def ShareRideConfirm(request, main_id, share_id):
+    '''
+    Ride Searching(Sharer)
+    Sharer can join a selected open ride
+    '''
     share_ride_request = ShareRequest.objects.get(pk=share_id)
     main_ride_request = Request.objects.get(pk=main_id)
     share_ride_request.main_request = main_ride_request
     share_ride_request.save()
-    email = EmailMessage('Request Confirmed',
-                         'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(share_ride_request.id),
-                         to=[share_ride_request.sharer.email])
-    email.send()
     return redirect('orders:index')
 
 
 class RequestListView(LoginRequiredMixin, generic.ListView):
+    '''
+    Ride Status Viewing(Owner)
+    display the list of all ongoing requests
+    '''
     mode = Request
     template_name = 'request_list.html'
     paginate_by = 10
@@ -211,6 +282,10 @@ class RequestListView(LoginRequiredMixin, generic.ListView):
 
 
 class ShareRequestListView(LoginRequiredMixin, generic.ListView):
+    '''
+    Ride Status Viewing(Sharer)
+    display the list of all ongoing requests
+    '''
     mode = ShareRequest
     template_name = 'share_request_list.html'
     paginate_by = 10
@@ -223,7 +298,12 @@ class ShareRequestListView(LoginRequiredMixin, generic.ListView):
         context['share_request_list'] = ShareRequest.objects.all()
         return context
 
+    
 class RideSearchingListView(LoginRequiredMixin, generic.ListView):
+    '''
+    Ride Searching(Driver)
+    The Driver can search for open ride requests.
+    '''
     mode = Request
     template_name = 'op_request_list.html'
     paginate_by = 10
@@ -244,6 +324,10 @@ class CFRideStatusListView(LoginRequiredMixin, generic.ListView):
 
 
 class ShareRideSearchingListView(LoginRequiredMixin, generic.ListView):
+    '''
+    Ride Seaching(Sharer)
+    The list of shared open rides
+    '''
     mode = Request
     template_name = 'share_ride_list.html'
     paginate_by = 10

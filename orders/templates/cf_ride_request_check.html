@@ -12,7 +12,9 @@
        <li><a>Passenger Number:{{ride_request.passenger_num}}</a></li>
        <li><a>Special Car Info:{{ride_request.special_car_info}}</a></li>
        <li><a>Remarks: {{ride_request.remarks}}</a></li>
-       
+       {% for share_request in share_ride_request%}
+       <li><a>Sharer: {{ share_request.sharer}}Passenger Number: {{share_request.passenger_num}}</a></li>
+       {% endfor %}
   </ul>
   {% else %}
     <p>There is no required order.</p>
