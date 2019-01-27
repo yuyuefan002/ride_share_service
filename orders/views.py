@@ -1,10 +1,7 @@
-from django.shortcuts import render, redirect, render_to_response, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-# from .models import Request, Driver
-from django.contrib.auth.forms import UserCreationForm
 from .forms import DriverRegisterForm, RideRequestForm, ShareRideRequestForm
-from django.contrib.auth.models import User
 from .models import Request, Driver, ShareRequest
 from django.db import IntegrityError
 from django.contrib import messages
@@ -97,15 +94,14 @@ def CFRideRequestCheck(request, pk):
 
 
 def CFShareRideRequestCheck(request, pk):
-    share_ride_request = get_object_or_404(ShareRequest, pk=pk)
-    main_ride_request = get_object_or_404(Request, pk=share_ride_request.main_request.id)
+    share_ride_request = ShareRequest.objects.get(pk=pk)
     try:
-        driver_info = Driver.objects.get( pk=main_ride_request.driver.user)
+        driver_info = Driver.objects.get(pk=share_ride_request.main_request.driver)
     except Driver.DoesNotExist:
         driver_info = None
-        context = {
+    context = {
             'share_ride_request': share_ride_request,
-            'main_ride_request': main_ride_request,
+            'ride_request': share_ride_request.main_request,
             'driver_info': driver_info,
         }
     return render(request, 'share_ride_request_check.html', context)
@@ -181,11 +177,16 @@ def RideConfirm(request, pk):
     request_detail.driver = driver
     request_detail.status = 'cf'
     request_detail.save()
-    email = EmailMessage('Request Confirmed', 'Dear driver,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id), to=[driver.user.email])
+    email = EmailMessage('Request Confirmed',
+                         'Dear driver,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
+                         to=[driver.user.email])
     email.send()
-    email = EmailMessage('Request Confirmed', 'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id), to=[request_detail.owner.email])
+    email = EmailMessage('Request Confirmed',
+                         'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
+                         to=[request_detail.owner.email])
     email.send()
     return redirect('orders:index')
+
 
 @login_required
 def ShareRideConfirm(request, main_id, share_id):
@@ -193,7 +194,9 @@ def ShareRideConfirm(request, main_id, share_id):
     main_ride_request = Request.objects.get(pk=main_id)
     share_ride_request.main_request = main_ride_request
     share_ride_request.save()
-    email = EmailMessage('Request Confirmed', 'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(share_ride_request.id), to=[share_ride_request.sharer.email])
+    email = EmailMessage('Request Confirmed',
+                         'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(share_ride_request.id),
+                         to=[share_ride_request.sharer.email])
     email.send()
     return redirect('orders:index')
 
@@ -213,14 +216,18 @@ class ShareRequestListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return ShareRequest.objects.filter(sharer__exact=self.request.user)
+        return ShareRequest.objects.all()
 
-    
+    def get_context_data(self, **kwargs):
+        context = super(ShareRequestListView, self).get_context_data(**kwargs)
+        context['share_request_list'] = ShareRequest.objects.all()
+        return context
+
 class RideSearchingListView(LoginRequiredMixin, generic.ListView):
     mode = Request
     template_name = 'op_request_list.html'
     paginate_by = 10
-    
+
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
         return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__icontains=driver.special_car_info)
