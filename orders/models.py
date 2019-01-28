@@ -58,6 +58,9 @@ class Request(models.Model):
     passenger_num = models.IntegerField(default=1,
                                         validators=[MinValueValidator(1),
                                                     MaxValueValidator(6)])
+    total_passenger_num = models.IntegerField(default=1,
+                                              validators=[MinValueValidator(1),
+                                                          MaxValueValidator(6)])
     share_or_not = models.BooleanField(default=False)
     VEHICLE_TYPE = (
         ('sd', 'sedan'),

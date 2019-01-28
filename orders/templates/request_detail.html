@@ -11,9 +11,10 @@
        <li><a>Vehicle Plate Number: {{driver_info.plate_number}}</a></li>
        {% endif %}
        <li><a>Destination: {{ride_request.destination}}</a></li>
-       <li><a>Passenger Number:{{ride_request.passenger_num}}</a></li>
        <li><a>Special Car Info:{{ride_request.special_car_info}}</a></li>
        <li><a>Remarks: {{ride_request.remarks}}</a></li>
+       <li><a>Total Passenger Number:{{ride_request.total_passenger_num}}</a></li>
+       <li><a>Passenger Number:{{ride_request.passenger_num}}</a></li>
        {% for share_request in share_ride_request%}
        <li><a>Sharer: {{ share_request.sharer}} Passenger Number: {{share_request.passenger_num}}</a></li>
        {% endfor %}

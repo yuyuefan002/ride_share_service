@@ -117,7 +117,8 @@ def RideRequest(request):
             ride_request.type = form.cleaned_data['type']
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
-            ride_request.save()            
+            ride_request.total_passenger_num = ride_request.passenger_num
+            ride_request.save()  
             return redirect('orders:index')
     else:
         form = RideRequestForm()
@@ -220,9 +221,11 @@ def RideRequestEditing(request, pk):
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
         if form.is_valid():
+            ride_request.total_passenger_num -= ride_request.passenger_num
             ride_request.destination = form.cleaned_data['destination']
             ride_request.arrival_time = form.cleaned_data['arrival_time']
             ride_request.passenger_num = form.cleaned_data['passenger_num']
+            ride_request.total_passenger_num += ride_request.passenger_num
             ride_request.share_or_not = form.cleaned_data['share_or_not']
             ride_request.type = form.cleaned_data['type']
             ride_request.special_car_info = form.cleaned_data['special_car_info']
@@ -310,7 +313,9 @@ def JoinShareRide(request, main_id, share_id):
     '''
     share_ride_request = ShareRequest.objects.get(pk=share_id)
     main_ride_request = Request.objects.get(pk=main_id)
+    main_ride_request.total_passenger_num += share_ride_request.passenger_num
     share_ride_request.main_request = main_ride_request
+    main_ride_request.save()
     share_ride_request.save()
     return redirect('orders:index')
 
@@ -357,7 +362,7 @@ class RideSearchingListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
-        return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__exact=driver.special_car_info)
+        return Request.objects.filter(status__exact='op').filter(total_passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__exact=driver.special_car_info)
 
 
 class CFRideStatusListView(LoginRequiredMixin, generic.ListView):
@@ -385,7 +390,7 @@ class ShareRideSearchingListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         shareRequest = ShareRequest.objects.get(pk=self.kwargs['pk'])
-        return Request.objects.filter(status__exact='op').filter(share_or_not__exact=True).filter(passenger_num__lt=(6-shareRequest.passenger_num)).filter(destination__exact=shareRequest.destination).filter(arrival_time__gte=shareRequest.early_arrival_time).filter(arrival_time__lte=shareRequest.late_arrival_time)
+        return Request.objects.filter(status__exact='op').filter(share_or_not__exact=True).filter(total_passenger_num__lt=(6-shareRequest.passenger_num)).filter(destination__exact=shareRequest.destination).filter(arrival_time__gte=shareRequest.early_arrival_time).filter(arrival_time__lte=shareRequest.late_arrival_time)
 
     def get_context_data(self, **kwargs):
         context = super(ShareRideSearchingListView, self).get_context_data(**kwargs)
