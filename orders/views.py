@@ -54,6 +54,7 @@ def DriverRegister(request):
         form = DriverRegisterForm()
     return render(request, 'driver_register.html', {'form': form})
 
+
 @login_required
 def DriverProfile(request):
     '''
@@ -97,6 +98,7 @@ def DriverEditor(request):
     context = {'form': form,
                'driver_info': driver_info}
     return render(request, 'driver_register.html', context)
+
 
 @login_required
 def RideRequest(request):
@@ -148,14 +150,17 @@ def ShareRideRequest(request):
     return render(request, 'share_ride_request.html', {'form': form})
 
 
-def CFRideRequestCheck(request, pk):
+def RequestDetail(request, pk):
     '''
     Ride Status Viewing(Owner)
     Owner can check the current ride details including
     driver and vehicle, sharer information
     '''
     ride_request = get_object_or_404(Request, pk=pk)
-    driver_info = get_object_or_404(Driver, pk=ride_request.driver.user)
+    if ride_request.driver is not None:
+        driver_info = Driver.objects.get(pk=ride_request.driver.user)
+    else:
+        driver_info = None
     try:
         share_ride_request = ShareRequest.objects.filter(main_request=ride_request.id)
     except ShareRequest.DoesNotExist:
@@ -164,11 +169,12 @@ def CFRideRequestCheck(request, pk):
         'driver_info': driver_info,
         'ride_request': ride_request,
         'share_ride_request': share_ride_request,
+        'pk': pk,
     }
-    return render(request, "cf_ride_request_check.html", context)
+    return render(request, "request_detail.html", context)
 
 
-def CFShareRideRequestCheck(request, pk):
+def ShareRequestDetail(request, pk):
     '''
     Ride Satus Viewing(Sharer)
     Sharer can check the current ride details including
@@ -191,7 +197,7 @@ def CFShareRideRequestCheck(request, pk):
             'ride_request': ride_request,
             'driver_info': driver_info,
         }
-    return render(request, 'cf_ride_request_check.html', context)
+    return render(request, 'request_detail.html', context)
 
 
 def RideRequestJump(request, pk):
@@ -222,23 +228,15 @@ def RideRequestEditing(request, pk):
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
             ride_request.save()
-            return redirect('orders:index')
+            return redirect('orders:cf_ride_request_check', pk=pk)
     else:
-        destination = ride_request.destination
-        arrival_time = ride_request.arrival_time
-        passenger_num = ride_request.passenger_num
-        share_or_not = ride_request.share_or_not
-        type = ride_request.type
-        special_car_info = ride_request.special_car_info
-        remarks = ride_request.remarks
-        form = RideRequestForm(initial={'destination': destination,
-                                        'arrival_time': arrival_time,
-                                        'passenger_num': passenger_num,
-                                        'share_or_not': share_or_not,
-                                        'type':type,
-                                        'type': type,
-                                        'special_car_info': special_car_info,
-                                        'remarks': remarks})
+        form = RideRequestForm(initial={'destination': ride_request.destination,
+                                        'arrival_time': ride_request.arrival_time,
+                                        'passenger_num': ride_request.passenger_num,
+                                        'share_or_not': ride_request.share_or_not,
+                                        'type': ride_request.type,
+                                        'special_car_info': ride_request.special_car_info,
+                                        'remarks': ride_request.remarks})
     context = {
         'form': form,
         'ride_request': ride_request,
@@ -254,17 +252,18 @@ def CFRideDetail(request, pk):
     Driver can mark a specific request to be completed
     '''
     ride_request = Request.objects.get(pk=pk)
+    share_ride_request = ShareRequest.objects.filter(main_request=ride_request)
     if request.method == 'POST':
         ride_request.status = 'cp'
         ride_request.save()
         return redirect('orders:index')
-    return render(request, 'cf_ride_detail.html', {'ride_request': ride_request})
     return render(request, 'cf_ride_detail.html',
-                  {'ride_request': ride_request})
+                  {'ride_request': ride_request,
+                   'share_ride_request': share_ride_request})
 
 
 @login_required
-def DriverCheck(request):
+def DriverIDCheck(request):
     '''
     Check whether user has registered as a driver or not
     '''
@@ -297,14 +296,14 @@ def RideConfirm(request, pk):
     email.send()
     for request in share_request:
         email = EmailMessage('Request Confirmed',
-                         'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
-                         to=[request.sharer.email])
+                             'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
+                             to=[request.sharer.email])
         email.send()
     return redirect('orders:index')
 
 
 @login_required
-def ShareRideConfirm(request, main_id, share_id):
+def JoinShareRide(request, main_id, share_id):
     '''
     Ride Searching(Sharer)
     Sharer can join a selected open ride
@@ -343,7 +342,7 @@ class ShareRequestListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ShareRequestListView, self).get_context_data(**kwargs)
-        context['share_request_list'] = ShareRequest.objects.all()
+        context['share_request_list'] = ShareRequest.objects.filter(sharer=self.request.user).exclude(main_request=None)
         return context
 
     
@@ -358,10 +357,14 @@ class RideSearchingListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
-        return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__icontains=driver.special_car_info)
+        return Request.objects.filter(status__exact='op').filter(passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__exact=driver.special_car_info)
 
 
 class CFRideStatusListView(LoginRequiredMixin, generic.ListView):
+    '''
+    Ride Satus Viewing
+    List all the ongoing requests.
+    '''
     mode = Request
     template_name = 'cf_request_list.html'
     paginate_by = 10

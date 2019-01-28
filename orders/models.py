@@ -95,7 +95,7 @@ class Request(models.Model):
         return f'{self.create_date}: {self.owner}'
 
     def get_absolute_url(self):
-        return reverse('orders:ride_request_jump', args=[str(self.id)])
+        return reverse('orders:cf_ride_request_check', args=[str(self.id)])
 
     def get_confirm_url(self):
         return reverse('orders:ride_confirm', args=[str(self.id)])

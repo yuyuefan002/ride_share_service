@@ -8,6 +8,9 @@
        <li><a>Passenger Number:{{ride_request.passenger_num}}</a></li>
        <li><a>Special Car Info:{{ride_request.special_car_info}}</a></li>
        <li><a>Remarks: {{ride_request.remarks}}</a></li>
+       {% for request in share_ride_request %}
+       <li><a>Sharer Name:{{request.sharer}} Passenger Number: {{request.passenger_num}}</a></li>
+       {% endfor %}
   </ul>
   <form method="post">
     {% csrf_token %}

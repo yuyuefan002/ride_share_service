@@ -1,20 +1,25 @@
 {% extends "base_generic.html" %}
 {% block content %}
-  <h1>Ride Searching</h1>
+  <h1>Ride Information</h1>
   {% if ride_request %}
   <ul>
        <li><a>Creation Date: {{ride_request.create_date}}</a></li>
        <li><a>Ride Status: {{ride_request.status}}</a></li>
+       {% if driver_info %}
        <li><a>Driver: {{driver_info.user}}</a></li>
        <li><a>Vehicle: {{driver_info.type}}</a></li>
        <li><a>Vehicle Plate Number: {{driver_info.plate_number}}</a></li>
+       {% endif %}
        <li><a>Destination: {{ride_request.destination}}</a></li>
        <li><a>Passenger Number:{{ride_request.passenger_num}}</a></li>
        <li><a>Special Car Info:{{ride_request.special_car_info}}</a></li>
        <li><a>Remarks: {{ride_request.remarks}}</a></li>
        {% for share_request in share_ride_request%}
-       <li><a>Sharer: {{ share_request.sharer}}Passenger Number: {{share_request.passenger_num}}</a></li>
+       <li><a>Sharer: {{ share_request.sharer}} Passenger Number: {{share_request.passenger_num}}</a></li>
        {% endfor %}
+       {% if ride_request.status == 'op'%}
+       <li><a href="{% url 'orders:requests' %}{{ pk }}">revise</a></li>
+       {% endif %}
   </ul>
   {% else %}
     <p>There is no required order.</p>
