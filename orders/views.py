@@ -201,17 +201,6 @@ def ShareRequestDetail(request, pk):
     return render(request, 'request_detail.html', context)
 
 
-def RideRequestJump(request, pk):
-    '''
-    Ride Request Editing/Viewing Jump(Owner)
-    Jump based on the status of request
-    '''
-    ride_request = get_object_or_404(Request, pk=pk)
-    if ride_request.status == 'op':
-        return redirect('orders:ride_request_editing', pk=ride_request.id)
-    return redirect('orders:cf_ride_request_check', pk=ride_request.id)
-
-
 def RideRequestEditing(request, pk):
     '''
     Ride Request Editing(Owner)
