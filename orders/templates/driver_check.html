@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  <h1>Driver info</h1>
+  {% if driver_info %}
+  <ul>
+       <li><a>Last Name: {{driver_info.last_name}}</a></li>
+       <li><a>First Name: {{driver_info.first_name}}</a></li>
+       <li><a>Vehicle Type:{{driver_info.type}}</a></li>
+       <li><a>Plate Number:{{driver_info.plate_number}}</a></li>
+       <li><a>Max Passenger: {{driver_info.max_passenger}}</a></li>
+       <li><a>Special Car Info: {{driver_info.special_car_info}}</a></li>
+       <li><a href='{% url 'orders:driver_edit' %}'>Revise</a></li>
+  </ul>
+  {% else %}
+    <p>There is no driver info.</p>
+  {% endif %}       
+{% endblock %}

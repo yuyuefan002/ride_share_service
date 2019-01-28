@@ -54,6 +54,14 @@ def DriverRegister(request):
         form = DriverRegisterForm()
     return render(request, 'driver_register.html', {'form': form})
 
+@login_required
+def DriverProfile(request):
+    '''
+    Driver info checking
+    '''
+    driver_info = Driver.objects.get(user=request.user)
+    return render(request, 'driver_check.html', {'driver_info': driver_info})
+
 
 @login_required
 def DriverEditor(request):
@@ -71,7 +79,7 @@ def DriverEditor(request):
             driver_info.max_passenger = form.cleaned_data['max_passenger']
             driver_info.special_car_info = form.cleaned_data['special_car_info']
             driver_info.save()
-            return redirect('orders:index')
+            return redirect('orders:driver_profile')
 
     else:
         first_name = driver_info.first_name
