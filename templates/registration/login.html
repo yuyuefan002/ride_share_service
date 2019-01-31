@@ -1,4 +1,4 @@
-
+{% extends "base_generic.html" %}
 
 {% block content %}
 
@@ -30,8 +30,8 @@
 </tr>
 </table>
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+<input type="submit" class="btn btn-primary" value="login" />
+<input type="hidden" class="btn btn-primary" name="next" value="{{ next }}" />
 </form>
 
 {# Assumes you setup the password_reset view in your URLconf #}

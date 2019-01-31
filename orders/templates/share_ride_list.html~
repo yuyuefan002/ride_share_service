@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+0;136;0c
+{% block content %}
+  <h1>Share Ride Searching</h1>
+  {% if request_list %}
+  <ul>
+    {% for request in request_list %}
+      <li>
+        <a href="">Required Arrival Time: {{ request.arrival_time }} Destination: {{request.destination}}</a>(Owner:{{request.owner}}, passenger_num: {{request.passenger_num}})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There is no any request.</p>
+  {% endif %}       
+{% endblock %}
