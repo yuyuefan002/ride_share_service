@@ -1,10 +1,10 @@
 {% extends "base_generic.html" %}
 {% block title %}<title>Login</title>{% endblock%}
-{% load static %}
 
-{% block content %}
-
-{% if form.errors %}
+{% block css %}
+{% endblock %}
+{% block main %}
+	{% if form.errors %}
   <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
@@ -39,5 +39,6 @@
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 <p><a href="{% url 'accounts:signup' %}">New User?</a></p>
+
 
 {% endblock %}

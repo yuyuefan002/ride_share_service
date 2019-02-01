@@ -13,8 +13,7 @@
   <!-- Add additional CSS in static file -->
   {% load static %}
   <link rel="stylesheet" href="{% static '/css/styles.css' %}">
-
-</head>
+  </head>
 
 <body>
 
@@ -66,19 +65,20 @@
       </div>
     </nav><!--Navbar end-->
 </header>
-  {% block main %}
-  <main role="main">
-  <!--wrap up whole screen-->
-  <div class="container-fluid">
+  
+  <main role="main" style="margin: 5rem 0;">
+    {% block main %}
+    <!--wrap up whole screen-->
+  <div class="container marketing">
 
     <!--main screen div-->
-
+    <div class="row featurette">
 
       <!-- content div-->
-    
+      <div class="col-sm-10">
 	{% block content %}
 	{% endblock %}
-    
+      </div>
       <!-- content div end-->
 
       <!--pagination div-->
@@ -100,10 +100,11 @@
       {% endif %}
       {% endblock %}<!--pagination div end-->
 
-  </div><!--end of container-->
-
-  </main>
+    </div><!--end of container-->
+  </div>
   {% endblock %}
+  </main>
+  
 <!--unnecessary to revise the code below-->
 <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
