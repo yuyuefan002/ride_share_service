@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {% block title %}<title>Home</title>{% endblock %}
+  {% block title %}<title>Default</title>{% endblock %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--load bootstrap-->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- Add additional CSS in static file -->
   {% load static %}
@@ -11,41 +12,58 @@
 </head>
 <body>
   <div class="container-fluid">
+
+    <!--main screen div-->
     <div class="row">
+
+      <!-- sidebar div-->
       <div class="col-sm-2">
-      {% block sidebar %}
-        <ul class="sidebar-nav">
-        </ul>
-	<li><a href="{% url 'orders:index' %}">Home</a></li>
-	   {% if user.is_authenticated %}
-      <li>User: {{ user.get_username }}</li>
-     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
-   {% else %}
-     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
-   {% endif %} 
-  </ul>
-     {% endblock %}
+	{% block sidebar %}
+	<ul class="sidebar-nav">
+	  <li><a href="{% url 'orders:index' %}">Home</a></li>
+	  {% if user.is_authenticated %}
+	  <li>User: {{ user.get_username }}</li>
+	  <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
+	  {% else %}
+	  <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
+	  {% endif %}
+	</ul>
+	{% endblock %}
       </div>
-      <div class="col-sm-10 ">{% block content %}{% endblock %}</div>
+      <!-- sidebar div end-->
+
+      <!-- content div-->
+      <div class="col-sm-10 ">
+	{% block content %}
+	{% endblock %}
+      </div>
+      <!-- content div end-->
+
+      <!--pagination div-->
       {% block pagination %}
-  {% if is_paginated %}
-    <div class="pagination">
-      <span class="page-links">
-        {% if page_obj.has_previous %}
-          <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-        <span class="page-current">
-          <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</p>
-        </span>
-        {% if page_obj.has_next %}
-          <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-        {% endif %}
-      </span>
+      {% if is_paginated %}
+      <div class="pagination">
+	<span class="page-links">
+	  {% if page_obj.has_previous %}
+	  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+	  {% endif %}
+	  <span class="page-current">
+	    <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</p>
+	  </span>
+	  {% if page_obj.has_next %}
+	  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+	  {% endif %}
+	</span>
+      </div>    
+      {% endif %}
+      {% endblock %}
+      <!--pagination div end-->
     </div>
-  {% endif %}
-{% endblock %} 
-    </div>
+    <!--end of class row-->
 </div>
+
+
+
 <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

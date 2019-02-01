@@ -1,4 +1,6 @@
-
+{% extends "base_generic.html" %}
+{% block title %}<title>Login</title>{% endblock%}
+{% load static %}
 
 {% block content %}
 
@@ -30,11 +32,12 @@
 </tr>
 </table>
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+<input type="submit" class="btn btn-primary" value="login" />
+<input type="hidden" class="btn btn-primary" name="next" value="{{ next }}" />
 </form>
 
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+<p><a href="{% url 'accounts:signup' %}">New User?</a></p>
 
 {% endblock %}
