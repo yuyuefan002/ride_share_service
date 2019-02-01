@@ -1,0 +1,6 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<p>Welcome the ride share website</p>
+<a href="{% url 'orders:owner_request_ride' %}"><p>Request a ride</p></a>
+<a href="{% url 'orders:owner_order_list' %}"><p>View ongoing requests</p></a>
+{% endblock %}
