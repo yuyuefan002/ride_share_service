@@ -9,7 +9,7 @@
 
   <!-- Add additional CSS in static file -->
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static '/css/styles.css' %}">
 
 </head>
 
@@ -27,16 +27,16 @@
 	  <li class="nav-item active">
             <a class="nav-link" href="{%url 'home:home' %}">Home <span class="sr-only">(current)</span></a>
 	  </li>
-	  <li class="nav-item">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ride</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown02">
+	  <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ride</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown04">
               <a class="dropdown-item" href="{% url 'orders:owner_request_ride' %}">Make A Request</a>
               <a class="dropdown-item" href="{% url 'orders:owner_order_list' %}">Orders</a>
             </div>
 	  </li>
-	  <li class="nav-item">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Drive</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown03">
+	  <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Drive</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown04">
               <a class="dropdown-item" href="{% url 'orders:driver_search_ride' %}">Search</a>
               <a class="dropdown-item" href="{% url 'orders:driver_order_list' %}">Orders</a>
               <a class="dropdown-item" href="{% url 'orders:driver_profile' %}">Profile</a>
