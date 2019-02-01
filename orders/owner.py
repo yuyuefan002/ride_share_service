@@ -31,19 +31,6 @@ def MakeRequest(request):
     return render(request, 'owner/make_request.html', {'form': form})
 
 
-class OGINRequestListView(LoginRequiredMixin, generic.ListView):
-    '''
-    Ride Satus Viewing
-    List all the ongoing requests.
-    '''
-    mode = Request
-    template_name = 'owner/OGIN_request_list.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        driver = Driver.objects.get(pk=self.request.user)
-        return Request.objects.filter(driver__exact=driver).filter(status__exact='cf')
-
 
 class RequestListView(LoginRequiredMixin, generic.ListView):
     '''
