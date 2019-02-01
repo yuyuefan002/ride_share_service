@@ -36,6 +36,7 @@ BOOTSTRAP4 = {
 INSTALLED_APPS = [
     'bootstrap4',
     'bootstrap_datepicker_plus',
+    'home.apps.HomeConfig',
     'orders.apps.OrdersConfig',
     'accounts.apps.AccountsConfig',
     'django.contrib.admin',
@@ -129,6 +130,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, '/')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 LOGIN_REDIRECT_URL = '/order'
 
