@@ -6,12 +6,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--load bootstrap-->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
   <!-- Add additional CSS in static file -->
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
 </head>
+
 <body>
+
+  <!--Navbar-->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">BatMobile</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+	<ul class="navbar-nav mr-auto">
+	  <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+	  </li>
+	  <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+	  </li>
+	  <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+	  </li>
+	  <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown04">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+	  </li>
+	</ul>
+      </div>
+    </nav><!--Navbar end-->
+
+  <!--wrap up whole screen-->
   <div class="container-fluid">
+
 
     <!--main screen div-->
     <div class="row">
@@ -56,14 +92,12 @@
 	</span>
       </div>    
       {% endif %}
-      {% endblock %}
-      <!--pagination div end-->
-    </div>
-    <!--end of class row-->
-</div>
+      {% endblock %}<!--pagination div end-->
+    </div><!--end of class row-->
+  </div><!--end of container-->
 
 
-
+<!--unnecessary to revise the code below-->
 <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
