@@ -6,7 +6,7 @@
   <ul>
     {% for request in request_list %}
       <li>
-        <a href="{{ request.get_absolute_url }}">Creation time: {{ request.create_date }} Destination: {{request.destination}}</a>{% if request.driver%}(Driver: {{request.driver}}){% endif %}(status: {{request.status}})
+        <a style="color:#888" href="{{ request.get_absolute_url }}">Creation time: {{ request.create_date }} Destination: {{request.destination}}</a>{% if request.driver%}(Driver: {{request.driver}}){% endif %}(status: {{request.status}})
       </li>
     {% endfor %}
   </ul>

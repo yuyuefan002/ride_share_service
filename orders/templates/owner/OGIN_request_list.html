@@ -5,7 +5,7 @@
   <ul>
     {% for request in request_list %}
       <li>
-        <a href="{{ request.get_complete_url }}">Required Arrival Time: {{ request.arrival_time }} Destination: {{request.destination}}</a>(Owner:{{request.owner}}, total_passenger_num: {{request.total_passenger_num}})
+        <a style="color:#888" href="{{ request.get_complete_url }}">Required Arrival Time: {{ request.arrival_time }} Destination: {{request.destination}}</a>(Owner:{{request.owner}}, total_passenger_num: {{request.total_passenger_num}})
       </li>
     {% endfor %}
   </ul>

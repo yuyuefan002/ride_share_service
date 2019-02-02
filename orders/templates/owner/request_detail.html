@@ -19,7 +19,7 @@
        <li><a>Sharer: {{ share_request.sharer}} Passenger Number: {{share_request.passenger_num}}</a></li>
        {% endfor %}
        {% if ride_request.status == 'op'%}
-       <li><a href="{% url 'orders:requests' %}{{ pk }}">revise</a></li>
+       <li><a href="{% url 'orders:owner_order_list' %}{{ pk }}">revise</a></li>
        {% endif %}
   </ul>
   {% else %}

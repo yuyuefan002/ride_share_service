@@ -31,6 +31,7 @@ class OGINRequestListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
+
         return Request.objects.filter(driver__exact=driver).filter(status__exact='cf')
 
 
@@ -40,6 +41,7 @@ def Register(request):
     Driver Registration
     User fill the register form to be a driver
     '''
+
     if request.method == 'POST':
         form = DriverRegisterForm(request.POST)
         if form.is_valid():
@@ -66,7 +68,10 @@ def Profile(request):
     '''
     Driver info checking
     '''
-    driver_info = Driver.objects.get(user=request.user)
+    try:
+        driver_info = Driver.objects.get(user=request.user)
+    except Driver.DoesNotExist:
+            return redirect('orders:driver_register')
     return render(request, 'driver/profile.html', {'driver_info': driver_info})
 
 
@@ -131,7 +136,7 @@ def ConfirmRequest(request, pk):
                              'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
                              to=[request.sharer.email])
         email.send()
-    return redirect('orders:index')
+    return redirect('home:driverHome')
 
 
 @login_required
@@ -140,6 +145,10 @@ def OGINRideDetail(request, pk):
     Ride Status Viewing(Driver)
     Driver can mark a specific request to be completed
     '''
+    try:
+        Driver.objects.get(pk=request.user)
+    except Driver.DoesNotExist:
+        return redirect('orders:driver_register')
     ride_request = Request.objects.get(pk=pk)
     share_ride_request = ShareRequest.objects.filter(main_request=ride_request)
     if request.method == 'POST':
@@ -160,7 +169,7 @@ def IDCheck(request):
         Driver.objects.get(pk=request.user)
     except Driver.DoesNotExist:
         return redirect('orders:driver_register')
-    return redirect('orders:ride_search')
+    return redirect('home:driverHome')
 
 
 class SearchingRequestListView(LoginRequiredMixin, generic.ListView):
