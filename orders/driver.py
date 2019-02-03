@@ -19,6 +19,14 @@ def RegisterErr(request):
     return redirect('orders:index')
 
 
+@login_required
+def OGINRequestIDcheck(request):
+    try:
+        Driver.objects.get(pk=request.user)
+    except Driver.DoesNotExist:
+        return redirect('orders:driver_register')
+    return redirect('orders:driver_true_order_list')
+
 
 class OGINRequestListView(LoginRequiredMixin, generic.ListView):
     '''
@@ -34,6 +42,8 @@ class OGINRequestListView(LoginRequiredMixin, generic.ListView):
 
         return Request.objects.filter(driver__exact=driver).filter(status__exact='cf')
 
+
+@login_required
 
 @login_required
 def Register(request):
@@ -170,6 +180,15 @@ def IDCheck(request):
     except Driver.DoesNotExist:
         return redirect('orders:driver_register')
     return redirect('home:driverHome')
+
+
+@login_required
+def SearchRequestIDcheck(request):
+    try:
+        Driver.objects.get(pk=request.user)
+    except Driver.DoesNotExist:
+        return redirect('orders:driver_register')
+    return redirect('orders:driver_true_search_ride')
 
 
 class SearchingRequestListView(LoginRequiredMixin, generic.ListView):
