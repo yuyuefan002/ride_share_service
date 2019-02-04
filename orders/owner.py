@@ -25,7 +25,7 @@ def MakeRequest(request):
             ride_request.remarks = form.cleaned_data['remarks']
             ride_request.total_passenger_num = ride_request.passenger_num
             ride_request.save()  
-            return redirect('orders:index')
+            return redirect('home:successHome')
     else:
         form = RideRequestForm()
     return render(request, 'owner/make_request.html', {'form': form})
@@ -52,6 +52,8 @@ def RequestDetail(request, pk):
     driver and vehicle, sharer information
     '''
     ride_request = get_object_or_404(Request, pk=pk)
+    if ride_request.owner != request.user:
+        return redirect('home:errorHome')
     if ride_request.driver is not None:
         driver_info = Driver.objects.get(pk=ride_request.driver.user)
     else:
@@ -75,6 +77,8 @@ def RideRequestEditing(request, pk):
     User can edit the detail of this open request
     '''
     ride_request = get_object_or_404(Request, pk=pk)
+    if ride_request.owner != request.user:
+        return redirect('home:errorHome')
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
         if form.is_valid():
