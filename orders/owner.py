@@ -25,7 +25,7 @@ def MakeRequest(request):
             ride_request.remarks = form.cleaned_data['remarks']
             ride_request.total_passenger_num = ride_request.passenger_num
             ride_request.save()  
-            return redirect('orders:index')
+            return redirect('home:loginHome')
     else:
         form = RideRequestForm()
     return render(request, 'owner/make_request.html', {'form': form})

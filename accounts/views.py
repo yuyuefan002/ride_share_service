@@ -5,16 +5,18 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .forms import SignUpForm
+from django.contrib.auth.decorators import login_required
 # from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 
+@login_required
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('orders:index')
+            return redirect('home:loginHome')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})

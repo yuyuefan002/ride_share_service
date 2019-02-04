@@ -66,7 +66,7 @@ def Register(request):
             driver_info.max_passenger = form.cleaned_data['max_passenger']
             driver_info.special_car_info = form.cleaned_data['special_car_info']
             driver_info.save()
-            return redirect('orders:index')
+            return redirect('home:loginHome')
 
     else:
         form = DriverRegisterForm()

@@ -70,7 +70,7 @@ def JoinShareRide(request, main_id, share_id):
     share_ride_request.main_request = main_ride_request
     main_ride_request.save()
     share_ride_request.save()
-    return redirect('orders:index')
+    return redirect('home:loginHome')
 
 
 class RequestListView(LoginRequiredMixin, generic.ListView):
