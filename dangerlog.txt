@@ -1,7 +1,18 @@
+Feb.2
 1. When a driver registers, a owner makes a request or a sharer makes a request, it will jump to the old version order:index, changed to home:loginHome, maybe need a success page.
 2. In the driver info page, the revise button is white.
 3. In the logout page, the login again button is white.
 4. After registering a new account, if login, it will jump to the old version order:index, changed to home:loginHome.
+
+
+=======
+
+Feb.3
+1. A user can see orders created by other users by entering the order number. We add verification so that one user can only see his/her own orders.
+2. Add the success page after making a request.
+3. When one user registers to be a driver, he can use a plate which is already in the database.
+4. Users can make a request for a past date, or he can make requests which have overlap time.
+5. On sucess page, the "Return to home" button is white.
 5. User can access order detail belong to other users. solved
 6. user can input a date less than now(), solved
 7. user can access driver page without registration, solved
