@@ -8,4 +8,6 @@ urlpatterns = [
     path('ownerHome/', views.ownerHome, name='ownerHome'),
     path('driverHome/', views.driverHome, name='driverHome'),
     path('sharerHome/', views.sharerHome, name='sharerHome'),
+    path('errorHome/', views.errorHome, name='errorHome'),
+    path('successHome/', views.successHome, name='successHome'),
 ]

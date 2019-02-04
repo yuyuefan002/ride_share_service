@@ -21,3 +21,11 @@ def driverHome(request):
 
 def sharerHome(request):
     return render(request, 'sharerhome.html')
+
+
+def successHome(request):
+    return render(request, 'successhome.html')
+
+
+def errorHome(request):
+    return render(request, 'errorhome.html')
