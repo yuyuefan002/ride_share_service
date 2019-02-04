@@ -24,6 +24,7 @@ def MakeRequest(request):
             share_ride_request.destination = form.cleaned_data['destination']
             share_ride_request.early_arrival_time = form.cleaned_data['early_arrival_time']
             share_ride_request.late_arrival_time = form.cleaned_data['late_arrival_time']
+            
             share_ride_request.passenger_num = form.cleaned_data['passenger_num']
             share_ride_request.save()
             return redirect('orders:share_ride_list', pk=share_ride_request.id)
@@ -39,6 +40,8 @@ def RequestDetail(request, pk):
     driver and vehicle, and other sharer information
     '''
     share_ride_request = ShareRequest.objects.get(pk=pk)
+    if share_ride_request.sharer != request.user:
+        return redirect('home:errorHome')
     ride_request = share_ride_request.main_request
     try:
         driver_info = Driver.objects.get(pk=share_ride_request.main_request.driver)

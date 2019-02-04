@@ -1,21 +1,26 @@
 # Create your views here.
+from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
+from django.contrib.auth import authenticate, login
 from .forms import SignUpForm
-from django.contrib.auth.decorators import login_required
 # from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 
-@login_required
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.info(request, "Thanks for registering. You are now logged in.")
+            new_user = authenticate(username=form.cleaned_data['username'],
+                                    password=form.cleaned_data['password1'],
+                                    )
+            login(request, new_user)
             return redirect('home:loginHome')
     else:
         form = SignUpForm()

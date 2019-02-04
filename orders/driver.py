@@ -16,7 +16,7 @@ def RegisterErr(request):
     '''
     messages.add_message(request, messages.INFO, "You have already registered as a driver")
     
-    return redirect('orders:index')
+    return redirect('home:loginHome')
 
 
 @login_required
@@ -66,7 +66,7 @@ def Register(request):
             driver_info.max_passenger = form.cleaned_data['max_passenger']
             driver_info.special_car_info = form.cleaned_data['special_car_info']
             driver_info.save()
-            return redirect('home:loginHome')
+            return redirect('home:successHome')
 
     else:
         form = DriverRegisterForm()
@@ -146,7 +146,7 @@ def ConfirmRequest(request, pk):
                              'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
                              to=[request.sharer.email])
         email.send()
-    return redirect('home:driverHome')
+    return redirect('home:successHome')
 
 
 @login_required
@@ -160,11 +160,13 @@ def OGINRideDetail(request, pk):
     except Driver.DoesNotExist:
         return redirect('orders:driver_register')
     ride_request = Request.objects.get(pk=pk)
+    if ride_request.driver != request.driver:
+        return redirect('home:errorHome')
     share_ride_request = ShareRequest.objects.filter(main_request=ride_request)
     if request.method == 'POST':
         ride_request.status = 'cp'
         ride_request.save()
-        return redirect('orders:index')
+        return redirect('home:successHome')
     return render(request, 'driver/OGINRideDetail.html',
                   {'ride_request': ride_request,
                    'share_ride_request': share_ride_request})

@@ -2,3 +2,6 @@
 2. In the driver info page, the revise button is white.
 3. In the logout page, the login again button is white.
 4. After registering a new account, if login, it will jump to the old version order:index, changed to home:loginHome.
+5. User can access order detail belong to other users. solved
+6. user can input a date less than now(), solved
+7. user can access driver page without registration, solved

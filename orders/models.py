@@ -4,7 +4,8 @@ import uuid
 from django.urls import reverse
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
-import datetime
+
+from django.core.exceptions import ValidationError
 
 
 # Create your models here.
@@ -27,7 +28,7 @@ class Driver(models.Model):
         help_text='vehicle type',
         null=False)
     plate_number = models.CharField(max_length=20,
-                                    null=False)
+                                    null=False, unique=True)
     max_passenger = models.IntegerField(validators=[MinValueValidator(1),
                                                     MaxValueValidator(6)],
                                         null=False)
@@ -44,6 +45,11 @@ class Driver(models.Model):
         return '{}, {}'.format(self.last_name, self.first_name)
 
 
+def no_past(value):
+    now = timezone.now()
+    if value < now:
+        raise ValidationError('You must input a datetime in the future')
+
 class Request(models.Model):
     id = models.UUIDField(primary_key=True,
                           default=uuid.uuid4,
@@ -54,7 +60,7 @@ class Request(models.Model):
                                null=True, blank=True)
     create_date = models.DateTimeField('Creation Date', default=timezone.now)
     destination = models.CharField(max_length=200)
-    arrival_time = models.DateTimeField(null=True, blank=True)
+    arrival_time = models.DateTimeField(null=True, blank=True, validators=[no_past])
     passenger_num = models.IntegerField(default=1,
                                         validators=[MinValueValidator(1),
                                                     MaxValueValidator(6)])
@@ -109,7 +115,7 @@ class Request(models.Model):
     def get_complete_url(self):
         return reverse('orders:cf_ride_detail', args=[str(self.id)])
 
-    
+
 class ShareRequest(models.Model):
     id = models.UUIDField(primary_key=True,
                           default=uuid.uuid4,
@@ -118,8 +124,8 @@ class ShareRequest(models.Model):
                                null=True, blank=True)
     create_date = models.DateTimeField('Creation Date', default=timezone.now)
     destination = models.CharField(max_length=200)
-    early_arrival_time = models.DateTimeField(null=True, blank=True)
-    late_arrival_time = models.DateTimeField(null=True, blank=True)
+    early_arrival_time = models.DateTimeField(null=True, blank=True,validators=[no_past])
+    late_arrival_time = models.DateTimeField(null=True, blank=True,validators=[no_past])
     passenger_num = models.IntegerField(default=1,
                                         validators=[MinValueValidator(1),
                                                     MaxValueValidator(6)])
