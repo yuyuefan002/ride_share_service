@@ -1,0 +1,4 @@
+1. When a driver registers, a owner makes a request or a sharer makes a request, it will jump to the old version order:index, changed to home:loginHome, maybe need a success page.
+2. In the driver info page, the revise button is white.
+3. In the logout page, the login again button is white.
+4. After registering a new account, if login, it will jump to the old version order:index, changed to home:loginHome.
