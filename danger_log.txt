@@ -1,3 +1,7 @@
 1. When a user makes a request, if he/she clicks the submit button quickly for several times, several requests will be created and the email will be sent for several times.
 2. When a driver accepts an order, if he/she clicks quickly for several times, he can accept the same order for several times and the email will be sent for several times.
-3.
+3. When a user signs up, if he/she clicks sign up twice quickly, the web will tell the user the username already exists, but the account is successfully created.
+4. If a user registers to be a driver with others' plate, there will be an error in the server. Solved.
+5. A user can see orders created by other users by entering the order number. We add verification so that one user can only see his/her own orders.
+6. Users can make a request for a past date, or he can make requests which have overlap time. We made changes so that our web application no longer accept these kinds of requests.
+7. 
