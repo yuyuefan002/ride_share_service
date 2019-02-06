@@ -69,6 +69,8 @@ def JoinShareRide(request, main_id, share_id):
     Sharer can join a selected open ride
     '''
     share_ride_request = ShareRequest.objects.get(pk=share_id)
+    if share_ride_request.main_request == main_id:
+        return redirect('home:successHome')
     main_ride_request = Request.objects.get(pk=main_id)
     main_ride_request.total_passenger_num += share_ride_request.passenger_num
     share_ride_request.main_request = main_ride_request
@@ -81,7 +83,7 @@ def JoinShareRide(request, main_id, share_id):
                 [request.user.email],
                 fail_silently=False,
     )
-    return redirect('home:loginHome')
+    return redirect('home:successHome')
 
 
 class RequestListView(LoginRequiredMixin, generic.ListView):

@@ -15,6 +15,8 @@ def MakeRequest(request):
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
         if form.is_valid():
+            if Request.objects.filter(owner=request.user).filter(arrival_time=form.cleaned_data['arrival_time']).filter(destination=form.cleaned_data['destination']).exists():
+                return redirect('home:successHome')
             ride_request = Request.objects.create(owner=request.user)
             ride_request.destination = form.cleaned_data['destination']
             ride_request.arrival_time = form.cleaned_data['arrival_time']

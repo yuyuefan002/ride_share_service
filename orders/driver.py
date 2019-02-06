@@ -129,10 +129,13 @@ def ConfirmRequest(request, pk):
     driver = get_object_or_404(Driver, pk=request.user)
     if driver.user != request.user:
         return redirect('home:errorHome')
-    share_request = ShareRequest.objects.filter(main_request=request_detail)
+    if request_detail.status == 'cf':
+        return redirect('home:successHome')
     request_detail.driver = driver
     request_detail.status = 'cf'
     request_detail.save()
+    share_request = ShareRequest.objects.filter(main_request=request_detail)
+
     email = EmailMessage('Request Confirmed',
                          'Dear driver,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(request_detail.id),
                          to=[driver.user.email])
