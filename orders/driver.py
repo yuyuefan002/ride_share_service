@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import DriverRegisterForm
+from .forms import DriverRegisterForm, DriverUpdateForm
 from .models import Request, Driver, ShareRequest
 from django.db import IntegrityError
 from django.contrib import messages
@@ -53,10 +53,9 @@ def Register(request):
     if request.method == 'POST':
         form = DriverRegisterForm(request.POST)
         if form.is_valid():
-            try:
-                driver_info = Driver.objects.create(user=request.user, max_passenger=1)
-            except IntegrityError:
-                return redirect('orders:driver_register_error')
+            if Driver.objects.filter(user=request.user).exists():
+                return redirect('home:errorHome')
+            driver_info = Driver.objects.create(user=request.user, max_passenger=1)
             driver_info.first_name = form.cleaned_data['first_name']
             driver_info.last_name = form.cleaned_data['last_name']
             driver_info.type = form.cleaned_data['type']
@@ -90,7 +89,7 @@ def ProfileEditor(request):
     '''
     driver_info = get_object_or_404(Driver, user=request.user)
     if request.method == 'POST':
-        form = DriverRegisterForm(request.POST)
+        form = DriverUpdateForm(request.POST)
         if form.is_valid():
             driver_info.first_name = form.cleaned_data['first_name']
             driver_info.last_name = form.cleaned_data['last_name']
@@ -108,7 +107,7 @@ def ProfileEditor(request):
         plate_number = driver_info.plate_number
         max_passenger = driver_info.max_passenger
         special_car_info = driver_info.special_car_info
-        form = DriverRegisterForm(initial={'first_name': first_name,
+        form = DriverUpdateForm(initial={'first_name': first_name,
                                            'last_name': last_name,
                                            'type': type,
                                            'plate_number': plate_number,

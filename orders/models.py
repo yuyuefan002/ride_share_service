@@ -28,7 +28,7 @@ class Driver(models.Model):
         help_text='vehicle type',
         null=False)
     plate_number = models.CharField(max_length=20,
-                                    null=False, unique=True)
+                                    null=False)
     max_passenger = models.IntegerField(validators=[MinValueValidator(1),
                                                     MaxValueValidator(6)],
                                         null=False)

@@ -4,8 +4,14 @@ from .models import Request, ShareRequest, Driver
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class DriverRegisterForm(ModelForm):
+    def clean_plate_number(self):
+        data = self.cleaned_data['plate_number']
+        if Driver.objects.filter(plate_number=data).exists():
+            raise ValidationError("This plate number already exists")
+        return data
     class Meta:
         model = Driver
         fields =['first_name','last_name','type','plate_number','max_passenger','special_car_info',]
@@ -18,7 +24,20 @@ class DriverRegisterForm(ModelForm):
             'special_car_info': 'Any special Info about your car?',
         }
 
-    
+class DriverUpdateForm(ModelForm):
+    class Meta:
+        model = Driver
+        fields =['first_name','last_name','type','plate_number','max_passenger','special_car_info',]
+        labels = {
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
+            'type': 'Car type',
+            'plate_number': 'Plate Number',
+            'max_passenger': 'How many people can you have?',
+            'special_car_info': 'Any special Info about your car?',
+        }
+          
+        
 class RideRequestForm(ModelForm):
     class Meta:
         model = Request
