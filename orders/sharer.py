@@ -54,13 +54,11 @@ def RequestDetail(request, pk):
     except ShareRequest.DoesNotExist:
         share_ride_request = None
     context = {
-            'share_ride_request': share_ride_request,
-            'ride_request': ride_request,
-            'driver_info': driver_info,
+        'share_ride_request': share_ride_request,
+        'ride_request': ride_request,
+        'driver_info': driver_info,
+        'pk': pk,
         }
-    print(share_ride_request)
-    print(ride_request)
-    print(driver_info)
     return render(request, 'sharer/request_detail.html', context)
 
 
@@ -129,7 +127,7 @@ def RideRequestEditing(request, pk):
     Ride Request Editing(Owner)
     User can edit the detail of this open request
     '''
-    share_ride_request = get_object_or_404(Request, pk=pk)
+    share_ride_request = get_object_or_404(ShareRequest, pk=pk)
     ride_request = share_ride_request.main_request
     if share_ride_request.sharer != request.user:
         return redirect('home:errorHome')
@@ -138,12 +136,16 @@ def RideRequestEditing(request, pk):
         if form.is_valid():
             ride_request.total_passenger_num -= share_ride_request.passenger_num
             share_ride_request.passenger_num = form.cleaned_data['passenger_num']
-            share_ride_request.total_passenger_num += share_ride_request.passenger_num
+            ride_request.total_passenger_num += share_ride_request.passenger_num
+            ride_request.save()
             share_ride_request.save()
-            return redirect('orders:cf_share_ride_request_check', pk=pk)
+            return redirect('home:successHome')
     else:
-        form = ShareRideRequestForm(initial={
-                                        'passenger_num': share_ride_request.passenger_num,})
+        form = ShareRideRequestForm(initial={'destination': share_ride_request.destination,
+                                        'early_arrival_time': share_ride_request.early_arrival_time,
+                                             'late_arrival_time': share_ride_request.late_arrival_time,
+                                        'passenger_num': ride_request.passenger_num,})
+
     context = {
         'form': form,
         'share_ride_request': share_ride_request,
