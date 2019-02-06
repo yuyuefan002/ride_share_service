@@ -9,7 +9,7 @@ from .forms import SignUpForm
 # from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.contrib.auth import login
-
+from django.core.mail import send_mail
 
 def signup(request):
     if request.method == 'POST':
@@ -21,6 +21,13 @@ def signup(request):
                                     password=form.cleaned_data['password1'],
                                     )
             login(request, new_user)
+            send_mail(
+                'Account sign up for Batmobile',
+                'Congratulation! You have successfully signed up for BatMobile.\n Your username is: ' + new_user.username + ' Your password is: ' + form.cleaned_data['password1'] + '.\n',
+                'BatMobile',
+                [form.cleaned_data['email']],
+                fail_silently=False,
+            )
             return redirect('home:loginHome')
     else:
         form = SignUpForm()

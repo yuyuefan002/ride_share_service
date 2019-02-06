@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .models import Request, Driver, ShareRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.core.mail import send_mail
 
 @login_required
 def MakeRequest(request):
@@ -73,6 +73,13 @@ def JoinShareRide(request, main_id, share_id):
     share_ride_request.main_request = main_ride_request
     main_ride_request.save()
     share_ride_request.save()
+    send_mail(
+                'Joined Ride!',
+                'Congratulation! You have successfully joined the ride.\n Your destination is: ' + share_ride_request.destination + ' Your arrival time is: ' + str(main_ride_request.arrival_time) + '.\n',
+                'BatMobile',
+                [request.user.email],
+                fail_silently=False,
+    )
     return redirect('home:loginHome')
 
 

@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import RideRequestForm
 from .models import Request, Driver, ShareRequest
 from django.views import generic
-
+from django.core.mail import send_mail
 
 @login_required
 def MakeRequest(request):
@@ -24,7 +24,15 @@ def MakeRequest(request):
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
             ride_request.total_passenger_num = ride_request.passenger_num
-            ride_request.save()  
+            ride_request.save()
+            send_mail(
+                'Request confirmed!',
+                'Congratulation! You have successfully made a request.\n Destination is: ' + form.cleaned_data['destination'] + ' Arrival time is: ' + str(form.cleaned_data['arrival_time']) + '.\n',
+                'BatMobile',
+                [request.user.email],
+                fail_silently=False,
+            )
+
             return redirect('home:successHome')
     else:
         form = RideRequestForm()
