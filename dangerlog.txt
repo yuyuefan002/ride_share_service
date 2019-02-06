@@ -29,10 +29,10 @@ Feb.3
 Feb.5
 1. Although on Feb.3 the duplicate plate issue is solved, if the database already contains duplicate plates, it cannot migrate. Solved by flush the database.
 2. We changed the name of urls before, so there are a lot of bugs related to this change. We have to fix a lot of functions such as reverse.
-3. There is a bug in driver profile revise.
-4. When a driver wants to complete an order in the confirmed orders, there will be a bug.
-5. When a sharer clicks his/her order, there will be a bug.
-6. If a ride is shared by another person, it will no longer be searched by a driver.
+3. There is a bug in driver profile revise. solved
+4. When a driver wants to complete an order in the confirmed orders, there will be a bug. solved
+5. When a sharer clicks his/her order, there will be a bug. solved
+6. If a ride is shared by another person, it will no longer be searched by a driver. solved
 
 
 =======

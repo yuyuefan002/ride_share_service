@@ -44,8 +44,6 @@ class OGINRequestListView(LoginRequiredMixin, generic.ListView):
 
 
 @login_required
-
-@login_required
 def Register(request):
     '''
     Driver Registration
@@ -129,6 +127,8 @@ def ConfirmRequest(request, pk):
     '''
     request_detail = get_object_or_404(Request, pk=pk)
     driver = get_object_or_404(Driver, pk=request.user)
+    if request_detail.driver!=driver:
+        return redirect('home:errorHome')
     share_request = ShareRequest.objects.filter(main_request=request_detail)
     request_detail.driver = driver
     request_detail.status = 'cf'
@@ -156,16 +156,29 @@ def OGINRideDetail(request, pk):
     Driver can mark a specific request to be completed
     '''
     try:
-        Driver.objects.get(pk=request.user)
+        driver = Driver.objects.get(pk=request.user)
     except Driver.DoesNotExist:
         return redirect('orders:driver_register')
     ride_request = Request.objects.get(pk=pk)
-    if ride_request.driver != request.driver:
+    if ride_request.driver != driver:
         return redirect('home:errorHome')
     share_ride_request = ShareRequest.objects.filter(main_request=ride_request)
     if request.method == 'POST':
         ride_request.status = 'cp'
         ride_request.save()
+        email = EmailMessage('Request Complete',
+                         'Dear driver,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(ride_request.id),
+                         to=[ride_request.driver.user.email])
+        email.send()
+        email = EmailMessage('Request Confirmed',
+                         'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(ride_request.id),
+                         to=[ride_request.owner.email])
+        email.send()
+        for request in share_ride_request:
+            email = EmailMessage('Request Confirmed',
+                             'Dear customor,\n\nYour request {} has been confirmed.\n\nBest,\nRide Share Service'.format(ride_request.id),
+                             to=[request.sharer.email])
+            email.send()
         return redirect('home:successHome')
     return render(request, 'driver/OGINRideDetail.html',
                   {'ride_request': ride_request,
