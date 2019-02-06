@@ -33,7 +33,7 @@ Feb.5
 4. When a driver wants to complete an order in the confirmed orders, there will be a bug. solved
 5. When a sharer clicks his/her order, there will be a bug. solved
 6. If a ride is shared by another person, it will no longer be searched by a driver. solved
-
+7. User cannot update driver profile since unique plate number. solved
 
 =======
 We believe our web application's functions are developed 95%.
