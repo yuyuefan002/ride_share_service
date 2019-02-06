@@ -14,7 +14,7 @@ class RequestAdmin(admin.ModelAdmin):
     # list_display = ['id', 'owner', 'driver', 'create_date', 'destination', 'arrival_time', 'passenger_num', 'share_or_not', 'special_car_info', 'remarks', 'status']
     list_display = ['create_date', 'destination', 'owner','status']
     list_filter = ('status', 'passenger_num')
-    fieldsets = ((None, {'fields': ('id', 'create_date', 'driver', 'status', 'share_or_not',)}),
+    fieldsets = ((None, {'fields': ('id', 'create_date', 'driver', 'status', 'share_or_not','total_passenger_num')}),
                  ('Passenger info', {'fields': ('owner', 'destination', 'arrival_time', 'passenger_num')}),
                  ('Vehicle Request info', {'fields': ('type', 'special_car_info', 'remarks')}))
    
