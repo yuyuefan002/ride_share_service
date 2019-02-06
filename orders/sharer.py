@@ -1,6 +1,6 @@
 from django.views import generic
 from .forms import ShareRideRequestForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Request, Driver, ShareRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -58,6 +58,9 @@ def RequestDetail(request, pk):
             'ride_request': ride_request,
             'driver_info': driver_info,
         }
+    print(share_ride_request)
+    print(ride_request)
+    print(driver_info)
     return render(request, 'sharer/request_detail.html', context)
 
 
@@ -118,3 +121,33 @@ class AvailableRideSearchingListView(LoginRequiredMixin, generic.ListView):
         context = super(AvailableRideSearchingListView, self).get_context_data(**kwargs)
         context['share_request_id'] = self.kwargs['pk']
         return context
+
+
+@login_required
+def RideRequestEditing(request, pk):
+    '''
+    Ride Request Editing(Owner)
+    User can edit the detail of this open request
+    '''
+    share_ride_request = get_object_or_404(Request, pk=pk)
+    ride_request = share_ride_request.main_request
+    if share_ride_request.sharer != request.user:
+        return redirect('home:errorHome')
+    if request.method == 'POST':
+        form = ShareRideRequestForm(request.POST)
+        if form.is_valid():
+            ride_request.total_passenger_num -= share_ride_request.passenger_num
+            share_ride_request.passenger_num = form.cleaned_data['passenger_num']
+            share_ride_request.total_passenger_num += share_ride_request.passenger_num
+            share_ride_request.save()
+            return redirect('orders:cf_share_ride_request_check', pk=pk)
+    else:
+        form = ShareRideRequestForm(initial={
+                                        'passenger_num': share_ride_request.passenger_num,})
+    context = {
+        'form': form,
+        'share_ride_request': share_ride_request,
+    }
+
+    return render(request, 'sharer/share_ride_request_editing.html', context)
+

@@ -25,9 +25,9 @@ urlpatterns =[
     
     
     
-
+    path('sharer/requests/<uuid:pk>/', sharer.RideRequestEditing, name='sharer_ride_request_editing'),
     path('sharer/make-ride-request/', sharer.MakeRequest, name='sharer_request_ride'),
-    path('sharer/ongoing-request-list/', sharer.RequestListView.as_view(), name='sharer_order_list'),
+    path('sharer/requests/', sharer.RequestListView.as_view(), name='sharer_order_list'),
     path('sharer/request-detail/<uuid:pk>/', sharer.RequestDetail, name='cf_share_ride_request_check'),
     path('sharer/available-ride-list/<uuid:pk>/', sharer.AvailableRideSearchingListView.as_view(), name='share_ride_list'),
     path('sharer/join-ride/<uuid:main_id>/', sharer.JoinShareRide, name='middlepath'),

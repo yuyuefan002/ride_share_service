@@ -127,7 +127,7 @@ def ConfirmRequest(request, pk):
     '''
     request_detail = get_object_or_404(Request, pk=pk)
     driver = get_object_or_404(Driver, pk=request.user)
-    if request_detail.driver!=driver:
+    if driver.user != request.user:
         return redirect('home:errorHome')
     share_request = ShareRequest.objects.filter(main_request=request_detail)
     request_detail.driver = driver
@@ -217,4 +217,4 @@ class SearchingRequestListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         driver = Driver.objects.get(pk=self.request.user)
-        return Request.objects.filter(status__exact='op').filter(total_passenger_num__lt=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__exact=driver.special_car_info)
+        return Request.objects.filter(status__exact='op').filter(total_passenger_num__lte=driver.max_passenger).filter(Q(type__exact=driver.type) | Q(type__isnull=True)).filter(special_car_info__exact=driver.special_car_info)

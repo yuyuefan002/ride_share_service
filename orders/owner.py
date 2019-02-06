@@ -78,7 +78,7 @@ def RequestDetail(request, pk):
     }
     return render(request, "owner/request_detail.html", context)
 
-
+@login_required
 def RideRequestEditing(request, pk):
     '''
     Ride Request Editing(Owner)
