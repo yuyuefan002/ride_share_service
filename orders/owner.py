@@ -15,8 +15,7 @@ def MakeRequest(request):
     if request.method == 'POST':
         form = RideRequestForm(request.POST)
         if form.is_valid():
-            if Request.objects.filter(owner=request.user).filter(arrival_time=form.cleaned_data['arrival_time']).filter(destination=form.cleaned_data['destination']).exists():
-                return redirect('home:successHome')
+            
             ride_request = Request.objects.create(owner=request.user)
             ride_request.destination = form.cleaned_data['destination']
             ride_request.arrival_time = form.cleaned_data['arrival_time']
@@ -26,6 +25,8 @@ def MakeRequest(request):
             ride_request.special_car_info = form.cleaned_data['special_car_info']
             ride_request.remarks = form.cleaned_data['remarks']
             ride_request.total_passenger_num = ride_request.passenger_num
+            if Request.objects.filter(owner=request.user).filter(arrival_time=form.cleaned_data['arrival_time']).filter(destination=form.cleaned_data['destination']).exists():
+                return redirect('home:successHome')
             ride_request.save()
             send_mail(
                 'Request confirmed!',
