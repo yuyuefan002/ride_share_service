@@ -1,29 +1,22 @@
 from django.forms import ModelForm
 from bootstrap_datepicker_plus import DateTimePickerInput
-from .models import Request, ShareRequest
+from .models import Request, ShareRequest, Driver
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
-class DriverRegisterForm(forms.Form):
-    first_name = forms.CharField(max_length=100)
-    last_name = forms.CharField(max_length=100)
-    VEHICLE_TYPE = (
-        ('sd', 'sedan'),
-        ('sv', 'SUV'),
-        ('vn', 'van'),
-        ('lx', 'Luxury'),
-    )
-    
-    type = forms.ChoiceField(
-        choices=VEHICLE_TYPE,
-        initial='sd',
-        help_text='vehicle type',
-        )
-    plate_number = forms.CharField(max_length=20)
-    max_passenger = forms.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)], initial=1)
-    special_car_info = forms.CharField(required=False,  max_length=1000, )
-    help_texts = {'special_car_info': 'special car infos'}
+class DriverRegisterForm(ModelForm):
+    class Meta:
+        model = Driver
+        fields =['first_name','last_name','type','plate_number','max_passenger','special_car_info',]
+        labels = {
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
+            'type': 'Car type',
+            'plate_number': 'Plate Number',
+            'max_passenger': 'How many people can you have?',
+            'special_car_info': 'Any special Info about your car?',
+        }
 
     
 class RideRequestForm(ModelForm):
